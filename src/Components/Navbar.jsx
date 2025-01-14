@@ -11,7 +11,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { AuthContext } from "../Auth/AuthProvider";
 
 const Navbar = () => {
-    const {user} =useContext(AuthContext);
+    const {user,logout} =useContext(AuthContext);
     console.log(user);
 
     const [accountMenuOpen, setAccountMenuOpen] = useState(false)
@@ -38,20 +38,18 @@ const Navbar = () => {
                     onClick={() => setAccountMenuOpen(!accountMenuOpen)}>
                     <div className="relative">
                         <img
-                            src="https://img.freepik.com/free-photo/portrait-man-laughing_23-2148859448.jpg?t=st=1724605498~exp=1724609098~hmac=7f6fc106bae2c17b0c93af1b2e5483d9d8368f3e51284aaec7c7d50590d2bae5&w=740"
-                            alt="avatar" className="w-[35px] h-[35px] rounded-full object-cover" />
+                            src={user?.photoURL}
+                            alt={user?.displayName} className="w-[35px] h-[35px] rounded-full object-cover" />
                         <div
                             className="w-[10px] h-[10px] rounded-full bg-green-500 absolute bottom-[0px] right-0 border-2 border-white"></div>
                     </div>
 
-                    <h1 className="text-[1rem] font-[400] text-gray-600 sm:block hidden">Dhon
-                        Deo</h1>
-
+                    
                     <div
                         className={`${accountMenuOpen ? "translate-y-0 opacity-100 z-[1]" : "translate-y-[10px] opacity-0 z-[-1]"} bg-white w-max rounded-md boxShadow absolute top-[45px] right-0 p-[10px] flex flex-col transition-all duration-300 gap-[5px]`}>
                         <p className="flex items-center gap-[5px] rounded-md p-[8px] pr-[45px] py-[3px] text-[1rem] text-gray-600 hover:bg-gray-50">
                             <FiUser />
-                            View Profile
+                            {user?.displayName}
                         </p>
                         <p className="flex items-center gap-[5px] rounded-md p-[8px] pr-[45px] py-[3px] text-[1rem] text-gray-600 hover:bg-gray-50">
                             <IoSettingsOutline />
@@ -59,7 +57,7 @@ const Navbar = () => {
                         </p>
                         <p className="flex items-center gap-[5px] rounded-md p-[8px] pr-[45px] py-[3px] text-[1rem] text-gray-600 hover:bg-gray-50">
                             <FiUser />
-                            View Profile
+                            Dashboard
                         </p>
 
                         <div className="mt-3 border-t border-gray-200 pt-[5px]">
