@@ -1,68 +1,86 @@
-import React from 'react';
+
+import React, { useContext, useState } from "react";
+
+// react icons
+import { IoIosArrowUp } from "react-icons/io";
+import { TbLogout2, TbUsersGroup } from "react-icons/tb";
+
+import { AiOutlineFire } from "react-icons/ai";
+import { FiUser } from "react-icons/fi";
+import { IoSettingsOutline } from "react-icons/io5";
+import { AuthContext } from "../Auth/AuthProvider";
 
 const Navbar = () => {
+    const {user} =useContext(AuthContext);
+    console.log(user);
+
+    const [accountMenuOpen, setAccountMenuOpen] = useState(false)
+    
+
+
     return (
-        <div>
-            <div className="navbar bg-base-100">
-                <div className="flex-1">
-                    <a className="btn btn-ghost text-xl text-gray-950">Parcel<span className='text-red-700'>Pro</span> </a>
-                </div>
-                <div className="flex-none">
-                    <div className="dropdown dropdown-end">
-                        <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-                            <div className="indicator">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-5 w-5"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                                <span className="badge badge-sm indicator-item">8</span>
-                            </div>
-                        </div>
+        <nav
+            className="flex items-center justify-between w-full relative">
+            <img src="logo.png" alt="logo" className="w-[55px] " />
+            <ul className="items-center gap-[20px] text-[1rem] text-[#424242] lg:flex hidden">
+
+
+                <li className="flex items-center gap-[5px] cursor-pointer">
+                    <AiOutlineFire className="text-[1.1rem] text-gray-600" />
+                    Features
+                </li>
+
+
+            </ul>
+
+            <div className="flex items-center gap-[15px]">
+                <div className="flex items-center gap-[10px] cursor-pointer relative"
+                    onClick={() => setAccountMenuOpen(!accountMenuOpen)}>
+                    <div className="relative">
+                        <img
+                            src="https://img.freepik.com/free-photo/portrait-man-laughing_23-2148859448.jpg?t=st=1724605498~exp=1724609098~hmac=7f6fc106bae2c17b0c93af1b2e5483d9d8368f3e51284aaec7c7d50590d2bae5&w=740"
+                            alt="avatar" className="w-[35px] h-[35px] rounded-full object-cover" />
                         <div
-                            tabIndex={0}
-                            className="card card-compact dropdown-content bg-base-100 z-[1] mt-3 w-52 shadow">
-                            <div className="card-body">
-                                <span className="text-lg font-bold">8 Items</span>
-                                <span className="text-info">Subtotal: $999</span>
-                                <div className="card-actions">
-                                    <button className="btn btn-primary btn-block">View cart</button>
-                                </div>
-                            </div>
-                        </div>
+                            className="w-[10px] h-[10px] rounded-full bg-green-500 absolute bottom-[0px] right-0 border-2 border-white"></div>
                     </div>
-                    <div className="dropdown dropdown-end">
-                        <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-                            <div className="w-10 rounded-full">
-                                <img
-                                    alt="Tailwind CSS Navbar component"
-                                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                            </div>
+
+                    <h1 className="text-[1rem] font-[400] text-gray-600 sm:block hidden">Dhon
+                        Deo</h1>
+
+                    <div
+                        className={`${accountMenuOpen ? "translate-y-0 opacity-100 z-[1]" : "translate-y-[10px] opacity-0 z-[-1]"} bg-white w-max rounded-md boxShadow absolute top-[45px] right-0 p-[10px] flex flex-col transition-all duration-300 gap-[5px]`}>
+                        <p className="flex items-center gap-[5px] rounded-md p-[8px] pr-[45px] py-[3px] text-[1rem] text-gray-600 hover:bg-gray-50">
+                            <FiUser />
+                            View Profile
+                        </p>
+                        <p className="flex items-center gap-[5px] rounded-md p-[8px] pr-[45px] py-[3px] text-[1rem] text-gray-600 hover:bg-gray-50">
+                            <IoSettingsOutline />
+                            Settings
+                        </p>
+                        <p className="flex items-center gap-[5px] rounded-md p-[8px] pr-[45px] py-[3px] text-[1rem] text-gray-600 hover:bg-gray-50">
+                            <FiUser />
+                            View Profile
+                        </p>
+
+                        <div className="mt-3 border-t border-gray-200 pt-[5px]">
+                            <p className="flex items-center gap-[5px] rounded-md p-[8px] pr-[45px] py-[3px] text-[1rem] text-red-500 hover:bg-red-50">
+                                <TbLogout2 />
+                                Logout
+                            </p>
                         </div>
-                        <ul
-                            tabIndex={0}
-                            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                            <li>
-                                <a className="justify-between">
-                                    Profile
-                                    <span className="badge">New</span>
-                                </a>
-                            </li>
-                            <li><a>Settings</a></li>
-                            <li><a>Logout</a></li>
-                        </ul>
+
                     </div>
+
+                    <IoIosArrowUp
+                        className={`${accountMenuOpen ? "rotate-0" : "rotate-[180deg]"} transition-all duration-300 text-gray-600 sm:block hidden`} />
+
                 </div>
+
+
             </div>
 
-        </div>
+
+        </nav>
     );
 };
 
