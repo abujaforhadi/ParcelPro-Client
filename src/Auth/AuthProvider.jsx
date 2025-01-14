@@ -105,17 +105,16 @@ const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser?.email) {
         setUser(currentUser);
-        await axios.post("http://localhost:3000/jwt", {
-          email: currentUser?.email,
-        }, { withCredentials: true });
+        // await axios.post("http://localhost:3000/jwt", {
+        //   email: currentUser?.email,
+        // }, { withCredentials: true });
       } else {
         setUser(null);
-        await axios.post("http://localhost:3000/logout", {}, { withCredentials: true });
+        // await axios.post("http://localhost:3000/logout", {}, { withCredentials: true });
       }
       setLoading(false);
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
