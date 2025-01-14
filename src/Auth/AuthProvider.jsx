@@ -62,7 +62,7 @@ const AuthProvider = ({ children }) => {
       setUser(user);
 
       // Store the user in the database
-      await axios.post("http://localhost:3000/user", {
+      await axios.post("http://localhost:3000/users", {
         email: user?.email,
         displayName: user?.displayName,
         photoURL: user?.photoURL,
