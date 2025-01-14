@@ -44,12 +44,12 @@ const Registration = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex flex-col items-center justify-center min-h-screen  dark:bg-gray-900">
       <div className="flex flex-row w-full max-w-4xl bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
         {/* SVG Section */}
         <div className="hidden md:flex md:w-1/2 bg-blue-100 dark:bg-gray-700 items-center justify-center">
           <img
-            src="/signup.svg"
+            src="/Signup.svg"
             alt="Sign Up Illustration"
             className="w-3/4 h-auto object-contain"
           />
