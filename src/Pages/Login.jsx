@@ -1,9 +1,46 @@
 import React, { useContext, useState } from "react";
+import { AuthContext } from "../Auth/AuthProvider";
 import { Link, useLocation, useNavigate } from "react-router";
-
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
- 
+  const { login, loginWithGoogle } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignIn = (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    login(email, password)
+      .then(() => {
+        setIsLoading(false);
+        navigate(location.state?.from?.pathname || "/");
+      })
+      .catch(() => {
+        setIsLoading(false);
+        toast.error("Login failed. Please check your credentials.");
+      });
+  };
+
+  const handleGoogleLogin = () => {
+    setIsLoading(true);
+    loginWithGoogle()
+      .then(() => {
+        setIsLoading(false);
+        navigate(location.state?.from?.pathname || "/");
+      })
+      .catch(() => {
+        setIsLoading(false);
+        toast.error("Google login failed. Try again later.");
+      });
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-row w-full max-w-4xl bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
