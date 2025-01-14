@@ -61,7 +61,6 @@ const AuthProvider = ({ children }) => {
       const user = result.user;
       setUser(user);
 
-      // Store the user in the database
       await axios.post("http://localhost:3000/users", {
         email: user?.email,
         displayName: user?.displayName,
@@ -110,7 +109,7 @@ const AuthProvider = ({ children }) => {
         // }, { withCredentials: true });
       } else {
         setUser(null);
-        // await axios.post("http://localhost:3000/logout", {}, { withCredentials: true });
+        await axios.post("http://localhost:3000/logout", {}, { withCredentials: true });
       }
       setLoading(false);
     });

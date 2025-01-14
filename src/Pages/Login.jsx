@@ -47,7 +47,7 @@ const Login = () => {
         {/* SVG Section */}
         <div className="hidden md:flex md:w-1/2 bg-blue-100 dark:bg-gray-700 items-center justify-center">
           <img
-            src="/signin.svg"
+            src="/login.svg"
             alt="Sign In Illustration"
             className="w-3/4 h-auto object-contain"
           />
