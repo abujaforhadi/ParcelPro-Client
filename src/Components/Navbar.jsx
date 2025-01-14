@@ -5,7 +5,7 @@ const Navbar = () => {
         <div>
             <div className="navbar bg-base-100">
                 <div className="flex-1">
-                    <a className="btn btn-ghost text-xl">daisyUI</a>
+                    <a className="btn btn-ghost text-xl text-gray-950">Parcel<span className='text-red-700'>Pro</span> </a>
                 </div>
                 <div className="flex-none">
                     <div className="dropdown dropdown-end">
