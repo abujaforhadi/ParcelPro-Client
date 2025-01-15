@@ -9,11 +9,10 @@ import { AiOutlineFire } from "react-icons/ai";
 import { FiUser } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { AuthContext } from "../Auth/AuthProvider";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 
 const Navbar = () => {
     const {user,logout} =useContext(AuthContext);
-    console.log(user);
 
     const [accountMenuOpen, setAccountMenuOpen] = useState(false)
     const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -31,7 +30,7 @@ const Navbar = () => {
     return (
         <nav
             className="flex items-center justify-between w-full relative">
-            <img src="logo.png" alt="logo" className="w-[55px] " />
+            <img src="/logo.png" alt="logo" className="w-[55px] " />
             <ul className="items-center gap-[20px] text-[1rem] text-[#424242] lg:flex hidden">
 
 
@@ -66,10 +65,10 @@ const Navbar = () => {
                                 <IoSettingsOutline />
                                 Settings
                             </p>
-                            <p className="flex items-center gap-[5px] rounded-md p-[8px] pr-[45px] py-[3px] text-[1rem] text-gray-600 hover:bg-gray-50">
+                            <NavLink  to="/dashboard" className="flex items-center gap-[5px] rounded-md p-[8px] pr-[45px] py-[3px] text-[1rem] text-gray-600 hover:bg-gray-50">
                                 <FiUser />
                                 Dashboard
-                            </p>
+                            </NavLink>
     
                             <div className="mt-3 border-t border-gray-200 pt-[5px]">
                                 <p className="flex items-center gap-[5px] rounded-md p-[8px] pr-[45px] py-[3px] text-[1rem] text-red-500 hover:bg-red-50">

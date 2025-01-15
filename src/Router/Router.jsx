@@ -6,6 +6,8 @@ import Registration from "../Pages/Registration";
 import Page404 from "../Pages/Page404";
 import DashBoard from "../Dashboard/Admin/DashBoard";
 import AdminHome from "../Dashboard/Admin/AdminHome";
+import AllUsers from "../Dashboard/Admin/AllUsers";
+import PrivateRouter from "./PrivateRouter";
 
 const router = createBrowserRouter([
     {
@@ -26,7 +28,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "/dashboard",
-                element: <DashBoard />,
+                element: <PrivateRouter><DashBoard /></PrivateRouter> ,
                 children: [
                     {
                         path: "adminhome", 
@@ -34,7 +36,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "users", 
-                        element: <AdminHome />
+                        element: <AllUsers />
                     }
                 ]
             }

@@ -17,10 +17,9 @@ const AllUsers = () => {
     axios
       .patch(`http://localhost:3000/users/${userId}`, { role: newRole })
       .then(() => {
-       
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
-            user.id === userId ? { ...user, role: newRole } : user
+            user._id === userId ? { ...user, role: newRole } : user
           )
         );
       })
@@ -33,7 +32,7 @@ const AllUsers = () => {
       axios
         .delete(`http://localhost:3000/users/${userId}`)
         .then(() => {
-          setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+          setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
         })
         .catch((error) => console.error("Error deleting user:", error));
     }
@@ -53,13 +52,13 @@ const AllUsers = () => {
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr key={user.id} className="text-center">
+            <tr key={user._id} className="text-center">
               <td className="border px-4 py-2">{user.displayName}</td>
               <td className="border px-4 py-2">{user.email}</td>
               <td className="border px-4 py-2">
                 <select
                   value={user.role}
-                  onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                  onChange={(e) => handleRoleChange(user._id, e.target.value)}
                   className="border px-2 py-1 rounded"
                 >
                   <option value="customer">Customer</option>
@@ -69,13 +68,7 @@ const AllUsers = () => {
               </td>
               <td className="border px-4 py-2">
                 <button
-                  onClick={() => alert(`Editing user: ${user.displayName}`)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
-                >
-                  Update
-                </button>
-                <button
-                  onClick={() => handleDelete(user.id)}
+                  onClick={() => handleDelete(user._id)}
                   className="bg-red-500 text-white px-3 py-1 rounded"
                 >
                   Delete

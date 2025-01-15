@@ -19,6 +19,9 @@ export const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false); 
+  const [isCustomer, setCustomer] = useState(false); 
+  const [isDeliveryman, setDeliveryman] = useState(false); 
 
   const createNewUser = async (email, password, displayName, photoURL) => {
     setLoading(true);
@@ -100,6 +103,26 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  // Check admin status
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (user?.email) {
+        try {
+          const response = await axios.get("http://localhost:3000/adminUsers", {
+            params: { email: user.email },
+          });
+          setIsAdmin(response.data.role === "admin"); 
+          setCustomer(response.data.role === "customer"); 
+          setDeliveryman(response.data.role === "deliveryman"); 
+        } catch (error) {
+          console.error("Error verifying admin status:", error);
+        }
+      }
+    };
+
+    checkAdmin();
+  }, [user]);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser?.email) {
@@ -124,8 +147,11 @@ const AuthProvider = ({ children }) => {
     loginWithGoogle,
     logout,
     loading,
+    isCustomer,
     ProfileUpdate,
     login,
+    isAdmin, 
+    isDeliveryman,
   };
 
   return (
