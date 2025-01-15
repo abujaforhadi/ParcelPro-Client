@@ -20,7 +20,7 @@ const Hero = () => {
                     <h1 className="text-[40px] sm:text-[60px] font-[600] leading-[45px] sm:leading-[70px]">
                         Bangladesh's <span className="text-[#90caf9]">Fastest</span> Delivery Service
                     </h1>
-                    <p className="text-[18px] text-gray-400 mt-2">
+                    <p className="text-[18px] text-gray-500 mt-2">
                         Delivering Parcels Across 64 Districts in Just 3 Days with 24/7 Support and Next-Day Payment, All at the Lowest Rates
                     </p>
                     <div className="relative my-5">
@@ -33,15 +33,15 @@ const Hero = () => {
                         </button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px] w-full sm:w-[80%]">
-                        <p className="flex items-center gap-[5px] text-gray-400 text-[1rem]">
+                        <p className="flex items-center gap-[5px] text-gray-500 text-[1rem]">
                             <FaCircleCheck className="text-[#F0B70D] text-[1.2rem]" />
                             Fast Delivery
                         </p>
-                        <p className="flex items-center gap-[5px] text-gray-400 text-[1rem]">
+                        <p className="flex items-center gap-[5px] text-gray-500 text-[1rem]">
                             <FaCircleCheck className="text-[#F0B70D] text-[1.2rem]" />
                             100% Parcel Safety
                         </p>
-                        <p className="flex items-center gap-[5px] text-gray-400 text-[1rem]">
+                        <p className="flex items-center gap-[5px] text-gray-500 text-[1rem]">
                             <FaCircleCheck className="text-[#F0B70D] text-[1.2rem]" />
                             Cash on Delivery
                         </p>

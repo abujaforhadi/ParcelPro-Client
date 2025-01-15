@@ -26,7 +26,7 @@ const AuthProvider = ({ children }) => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       setUser(userCredential?.user);
 
-      await axios.post("http://localhost:3000/user", {
+      await axios.post("http://localhost:3000/users", {
         email,
         displayName,
         photoURL,

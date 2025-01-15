@@ -3,6 +3,7 @@ import MainLayouts from "../Layouts/MainLayouts";
 import Home from "../Pages/Home";
 import Login from "../Pages/Login";
 import Registration from "../Pages/Registration";
+import Page404 from "../Pages/Page404";
 
 const router = createBrowserRouter([
     {
@@ -22,7 +23,8 @@ const router = createBrowserRouter([
                 element: <Registration />
             },
 
-        ]
+        ],
+        errorElement:<Page404/>
     },
 ]);
 
