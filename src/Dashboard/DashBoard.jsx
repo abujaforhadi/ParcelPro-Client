@@ -50,7 +50,6 @@ const DashBoard = () => {
             )}
 
             {/* Common menu */}
-            <MenuItem component={<NavLink to="history" />}>History</MenuItem>
           </Menu>
         </Sidebar>
       </div>

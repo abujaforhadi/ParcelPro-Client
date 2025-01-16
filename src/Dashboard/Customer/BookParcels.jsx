@@ -4,8 +4,8 @@ import axios from "axios";
 import { AuthContext } from "../../Auth/AuthProvider";
 
 const BookParcel = () => {
-  const { user } = useContext(AuthContext); 
-  const [price, setPrice] = useState(50); 
+  const { user } = useContext(AuthContext);
+  const [price, setPrice] = useState(50);
   const [message, setMessage] = useState("");
 
   const {
@@ -26,13 +26,13 @@ const BookParcel = () => {
 
   const onSubmit = async (data) => {
     try {
-      const parcelData = { 
-        ...data, 
-        price, 
-        name: user?.displayName, 
-        email: user?.email 
-      };
+      const parcelData = { ...data, price };
 
+      // Make sure parcelData contains the correct user info
+      parcelData.name = user?.displayName;
+      parcelData.email = user?.email;
+
+      console.log(parcelData); 
       const response = await axios.post("http://localhost:3000/bookparcel", parcelData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -55,29 +55,26 @@ const BookParcel = () => {
       <h1 className="text-2xl font-bold mb-4">Book a Parcel</h1>
       {message && <p className="mb-4 text-green-500">{message}</p>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Name Field */}
         <div>
-          <label className="block font-semibold mb-1">Name</label>
+          <label>Name</label>
           <input
             type="text"
-            value={user?.displayName || "Loading..."}
+            value={user?.displayName}
+           
             readOnly
-            className="block w-full p-2 border bg-gray-100 text-gray-700"
+            className="block w-full p-2 border"
           />
         </div>
-        
-        {/* Email Field */}
         <div>
-          <label className="block font-semibold mb-1">Email</label>
+          <label>Email</label>
           <input
             type="email"
-            value={user?.email || "Loading..."}
+            value={user?.email}
+           
             readOnly
-            className="block w-full p-2 border bg-gray-100 text-gray-700"
+            className="block w-full p-2 border"
           />
         </div>
-        
-        {/* Additional Fields */}
         <div>
           <label>Phone Number</label>
           <input
@@ -85,11 +82,8 @@ const BookParcel = () => {
             {...register("phoneNumber", { required: "Phone number is required" })}
             className="block w-full p-2 border"
           />
-          {errors.phoneNumber && (
-            <p className="text-red-500">{errors.phoneNumber.message}</p>
-          )}
+          {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
         </div>
-
         <div>
           <label>Parcel Type</label>
           <input
@@ -97,11 +91,8 @@ const BookParcel = () => {
             {...register("parcelType", { required: "Parcel type is required" })}
             className="block w-full p-2 border"
           />
-          {errors.parcelType && (
-            <p className="text-red-500">{errors.parcelType.message}</p>
-          )}
+          {errors.parcelType && <p className="text-red-500">{errors.parcelType.message}</p>}
         </div>
-
         <div>
           <label>Parcel Weight (kg)</label>
           <input
@@ -112,21 +103,77 @@ const BookParcel = () => {
             })}
             className="block w-full p-2 border"
           />
-          {errors.parcelWeight && (
-            <p className="text-red-500">{errors.parcelWeight.message}</p>
-          )}
+          {errors.parcelWeight && <p className="text-red-500">{errors.parcelWeight.message}</p>}
         </div>
-
+        <div>
+          <label>Receiver’s Name</label>
+          <input
+            type="text"
+            {...register("receiverName", { required: "Receiver name is required" })}
+            className="block w-full p-2 border"
+          />
+          {errors.receiverName && <p className="text-red-500">{errors.receiverName.message}</p>}
+        </div>
+        <div>
+          <label>Receiver's Phone Number</label>
+          <input
+            type="text"
+            {...register("receiverPhoneNumber", { required: "Receiver phone number is required" })}
+            className="block w-full p-2 border"
+          />
+          {errors.receiverPhoneNumber && <p className="text-red-500">{errors.receiverPhoneNumber.message}</p>}
+        </div>
+        <div>
+          <label>Parcel Delivery Address</label>
+          <input
+            type="text"
+            {...register("deliveryAddress", { required: "Delivery address is required" })}
+            className="block w-full p-2 border"
+          />
+          {errors.deliveryAddress && <p className="text-red-500">{errors.deliveryAddress.message}</p>}
+        </div>
+        <div>
+          <label>Requested Delivery Date</label>
+          <input
+            type="date"
+            {...register("requestedDeliveryDate", { required: "Delivery date is required" })}
+            className="block w-full p-2 border"
+          />
+          {errors.requestedDeliveryDate && <p className="text-red-500">{errors.requestedDeliveryDate.message}</p>}
+        </div>
+        <div>
+          <label>Delivery Address Latitude</label>
+          <input
+            type="text"
+            {...register("deliveryAddressLatitude", {
+              required: "Latitude is required",
+              pattern: { value: /^-?\d+(\.\d+)?$/, message: "Enter a valid latitude" },
+            })}
+            className="block w-full p-2 border"
+          />
+          {errors.deliveryAddressLatitude && <p className="text-red-500">{errors.deliveryAddressLatitude.message}</p>}
+        </div>
+        <div>
+          <label>Delivery Address Longitude</label>
+          <input
+            type="text"
+            {...register("deliveryAddressLongitude", {
+              required: "Longitude is required",
+              pattern: { value: /^-?\d+(\.\d+)?$/, message: "Enter a valid longitude" },
+            })}
+            className="block w-full p-2 border"
+          />
+          {errors.deliveryAddressLongitude && <p className="text-red-500">{errors.deliveryAddressLongitude.message}</p>}
+        </div>
         <div>
           <label>Price</label>
           <input
             type="text"
             value={`${price} Tk`}
             readOnly
-            className="block w-full p-2 border bg-gray-100 text-gray-700"
+            className="block w-full p-2 border"
           />
         </div>
-
         <button type="submit" className="px-4 py-2 bg-blue-500 text-white">
           Book
         </button>

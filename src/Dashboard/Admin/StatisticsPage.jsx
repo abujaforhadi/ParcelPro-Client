@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ApexCharts from "react-apexcharts";
+import axios from "axios";
 
 const StatisticsPage = () => {
   const [bookingsData, setBookingsData] = useState([]);
@@ -8,8 +9,8 @@ const StatisticsPage = () => {
   useEffect(() => {
     const fetchStatistics = async () => {
       try {
-        const response = await fetch("/admin/stats");
-        const data = await response.json();
+        const response = await axios.get("http://localhost:3000/admin/stats"); 
+        const data = response.data; 
 
         setBookingsData(data.bookingsByDate);
         setComparisonData(data.parcelsComparison);
