@@ -9,6 +9,7 @@ import AllUsers from "../Dashboard/Admin/AllUsers";
 import PrivateRouter from "./PrivateRouter";
 import BookParcel from "../Dashboard/Customer/BookParcels";
 import DashBoard from "../Dashboard/DashBoard";
+import MyParcels from "../Dashboard/Customer/MyParcels";
 
 const router = createBrowserRouter([
     {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
                     {
                         path: "bookparcel", 
                         element: <BookParcel />
+                    },
+                    {
+                        path: "myparcels", 
+                        element: <MyParcels />
                     }
                 ]
             }
