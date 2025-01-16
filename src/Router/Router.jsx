@@ -10,6 +10,7 @@ import PrivateRouter from "./PrivateRouter";
 import BookParcel from "../Dashboard/Customer/BookParcels";
 import DashBoard from "../Dashboard/DashBoard";
 import MyParcels from "../Dashboard/Customer/MyParcels";
+import MyProfile from "../Dashboard/Customer/MyProfile";
 
 const router = createBrowserRouter([
     {
@@ -49,7 +50,11 @@ const router = createBrowserRouter([
                     {
                         path: "myparcels", 
                         element: <MyParcels />
-                    }
+                    },
+                    {
+                        path: "myprofile", 
+                        element: <MyProfile />
+                    },
                 ]
             }
         ],
