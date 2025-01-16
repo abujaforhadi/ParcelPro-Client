@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Link, Outlet } from "react-router"; 
-import { AuthContext } from "../../Auth/AuthProvider";
+import { AuthContext } from "../Auth/AuthProvider";
 
 const DashBoard = () => {
   const { isAdmin, isCustomer, isDeliveryman } = useContext(AuthContext);
