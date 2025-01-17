@@ -24,7 +24,6 @@ const DashBoard = () => {
             {/* Admin-specific menu */}
             {isAdmin && (
               <>
-                <MenuItem component={<NavLink to="adminhome" />}>Admin Home</MenuItem>
                 <MenuItem component={<NavLink to="allparcels" />}>All Parcels</MenuItem>
                 <MenuItem component={<NavLink to="users" />}>All Users</MenuItem>
                 <MenuItem component={<NavLink to="alldeliverymen" />}>All Delivery Men</MenuItem>

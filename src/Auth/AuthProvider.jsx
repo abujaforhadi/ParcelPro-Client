@@ -103,26 +103,28 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  // Check admin status
   useEffect(() => {
     const checkAdmin = async () => {
       if (user?.email) {
+        setLoading(true); // Ensure loading is true during role verification
         try {
           const response = await axios.get("http://localhost:3000/adminUsers", {
             params: { email: user.email },
           });
-          setIsAdmin(response.data.role === "admin"); 
-          setCustomer(response.data.role === "customer"); 
-          setDeliveryman(response.data.role === "deliveryman"); 
+          setIsAdmin(response.data.role === "admin");
+          setCustomer(response.data.role === "customer");
+          setDeliveryman(response.data.role === "deliveryman");
         } catch (error) {
           console.error("Error verifying admin status:", error);
+        } finally {
+          setLoading(false); // Set loading to false after role verification
         }
       }
     };
-
+  
     checkAdmin();
   }, [user]);
-
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser?.email) {
