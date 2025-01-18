@@ -1,15 +1,16 @@
 import React, { useContext } from "react";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
-import { NavLink, Outlet } from "react-router";  // Changed to react-router-dom
+import { NavLink, Outlet } from "react-router"; 
 import { AuthContext } from "../Auth/AuthProvider";
 
 const DashBoard = () => {
   const { isAdmin, isCustomer, isDeliveryman } = useContext(AuthContext);
+  // console.log(isAdmin,isCustomer,isDeliveryman);
 
   return (
     <div className="flex h-screen">
       {/* Sidebar Section */}
-      <div className="w-1/4 bg-gray-100">
+      <div className="w-1/4 ">
         <Sidebar>
           <Menu
             menuItemStyles={{
@@ -45,6 +46,7 @@ const DashBoard = () => {
               <>
                 <MenuItem component={<NavLink to="mydeliverylist" />}>My Delivery List</MenuItem>
                 <MenuItem component={<NavLink to="myreviews" />}>My Reviews</MenuItem>
+                <MenuItem component={<NavLink to="profile" />}>Profile</MenuItem>
               </>
             )}
 
@@ -55,7 +57,7 @@ const DashBoard = () => {
 
       {/* Main Content Section */}
       <div className="w-3/4 p-6 bg-gray-100">
-        <Outlet /> {/* This will render the nested routes */}
+        <Outlet />
       </div>
     </div>
   );

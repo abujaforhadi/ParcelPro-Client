@@ -5,12 +5,11 @@ const AllDeliveryMen = () => {
   const [deliveryMen, setDeliveryMen] = useState([]);
 
   useEffect(() => {
-    // Fetch users from the backend
     axios.get("http://localhost:3000/users").then((response) => {
       const allUsers = response.data;
-      // Filter users to include only deliverymen
       const deliveryMenData = allUsers.filter(user => user.role === "deliveryman");
-      setDeliveryMen(deliveryMenData); // Set filtered data
+      setDeliveryMen(deliveryMenData);
+      console.log(deliveryMenData);
     }).catch(error => {
       console.error("Error fetching delivery men:", error);
     });
@@ -32,7 +31,8 @@ const AllDeliveryMen = () => {
           {deliveryMen.length > 0 ? (
             deliveryMen.map((man) => (
               <tr key={man._id}>
-                <td className="border border-gray-300 px-4 py-2">{man.name}</td>
+                <td className="border border-gray-300 px-4 py-2">{man.displayName
+                }</td>
                 <td className="border border-gray-300 px-4 py-2">{man.phone}</td>
                 <td className="border border-gray-300 px-4 py-2">{man.parcelsDelivered || 0}</td>
                 <td className="border border-gray-300 px-4 py-2">{man.averageReview || "N/A"}</td>

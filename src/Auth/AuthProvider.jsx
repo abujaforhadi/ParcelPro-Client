@@ -18,6 +18,7 @@ export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [userDB, setUserDB] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false); 
   const [isCustomer, setCustomer] = useState(false); 
@@ -111,13 +112,14 @@ const AuthProvider = ({ children }) => {
           const response = await axios.get("http://localhost:3000/adminUsers", {
             params: { email: user.email },
           });
+          setUserDB(response.data)
           setIsAdmin(response.data.role === "admin");
           setCustomer(response.data.role === "customer");
           setDeliveryman(response.data.role === "deliveryman");
         } catch (error) {
           console.error("Error verifying admin status:", error);
         } finally {
-          setLoading(false); // Set loading to false after role verification
+          setLoading(false); 
         }
       }
     };
@@ -154,6 +156,7 @@ const AuthProvider = ({ children }) => {
     login,
     isAdmin, 
     isDeliveryman,
+    userDB
   };
 
   return (

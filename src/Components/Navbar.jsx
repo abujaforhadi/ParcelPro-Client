@@ -30,7 +30,7 @@ const Navbar = () => {
     return (
         <nav
             className="flex items-center justify-between w-full relative">
-            <img src="/logo.png" alt="logo" className="w-[55px] " />
+            <Link to="/"><img src="/logo.png" alt="logo" className="w-[60px] " /></Link>
             <ul className="items-center gap-[20px] text-[1rem] text-[#424242] lg:flex hidden">
 
 
