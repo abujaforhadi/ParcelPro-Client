@@ -8,52 +8,75 @@ const AllParcels = () => {
   const [deliveryDate, setDeliveryDate] = useState("");
   const [searchStartDate, setSearchStartDate] = useState("");
   const [searchEndDate, setSearchEndDate] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
 
   useEffect(() => {
-    // Fetch parcels data
-    axios.get("http://localhost:3000/allparcels").then((response) => {
-      setParcels(response.data);
-    });
+    const fetchParcelsAndDeliveryMen = async () => {
+      try {
+        setIsLoading(true);
 
-    // Fetch delivery men
-    axios.get("http://localhost:3000/deliverymen").then((response) => {
-      setDeliveryMen(response.data);
-    });
+        const [parcelsResponse, usersResponse] = await Promise.all([
+          axios.get("http://localhost:3000/allparcels"),
+          axios.get("http://localhost:3000/users"),
+        ]);
+
+        setParcels(parcelsResponse.data);
+        setDeliveryMen(
+          usersResponse.data.filter((user) => user.role === "deliveryman")
+        );
+      } catch (err) {
+        setError("Failed to fetch data.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchParcelsAndDeliveryMen();
   }, []);
 
-  const handleAssign = (parcelId, deliveryManId) => {
-    axios
-      .put(`http://localhost:3000/updateparcel/${parcelId}`, {
+  const handleAssign = async (parcelId, deliveryManId) => {
+    try {
+      setIsLoading(true);
+      await axios.put(`http://localhost:3000/updateparcel/${parcelId}`, {
         status: "On The Way",
         deliveryMenId: deliveryManId,
         approximateDeliveryDate: deliveryDate,
-      })
-      .then((response) => {
-        setParcels(
-          parcels.map((parcel) =>
-            parcel._id === parcelId
-              ? { ...parcel, status: "On The Way", deliveryMenId, approximateDeliveryDate: deliveryDate }
-              : parcel
-          )
-        );
-      })
-      .catch((error) => {
-        console.error("Error assigning delivery man:", error);
       });
+
+      setParcels((prev) =>
+        prev.map((parcel) =>
+          parcel._id === parcelId
+            ? { ...parcel, status: "On The Way", deliveryMenId, approximateDeliveryDate: deliveryDate }
+            : parcel
+        )
+      );
+
+      setSelectedParcel(null);
+    } catch (err) {
+      console.error("Error assigning delivery man:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSearch = () => {
-    axios
-      .get("http://localhost:3000/allparcels", {
-        params: {
-          startDate: searchStartDate,
-          endDate: searchEndDate,
-        },
-      })
-      .then((response) => {
-        setParcels(response.data);
+  const handleSearch = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get("http://localhost:3000/allparcels", {
+        params: { startDate: searchStartDate, endDate: searchEndDate },
       });
+      setParcels(response.data);
+    } catch (err) {
+      setError("Search failed.");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div>
@@ -78,13 +101,13 @@ const AllParcels = () => {
       <table>
         <thead>
           <tr>
-            <th>User’s Name</th>
-            <th>User’s Phone</th>
-            <th>Booking Date</th>
-            <th>Requested Delivery Date</th>
-            <th>Cost</th>
-            <th>Status</th>
-            <th>Manage</th>
+            <th scope="col">User’s Name</th>
+            <th scope="col">User’s Phone</th>
+            <th scope="col">Booking Date</th>
+            <th scope="col">Requested Delivery Date</th>
+            <th scope="col">Cost</th>
+            <th scope="col">Status</th>
+            <th scope="col">Manage</th>
           </tr>
         </thead>
         <tbody>
@@ -97,12 +120,7 @@ const AllParcels = () => {
               <td>{parcel.price} Tk</td>
               <td>{parcel.status}</td>
               <td>
-                <button
-                  onClick={() => setSelectedParcel(parcel)}
-                  data-modal-target="parcel-modal"
-                >
-                  Manage
-                </button>
+                <button onClick={() => setSelectedParcel(parcel)}>Manage</button>
               </td>
             </tr>
           ))}
@@ -115,11 +133,15 @@ const AllParcels = () => {
           <h2>Manage Parcel</h2>
           <label>Delivery Man:</label>
           <select
-            onChange={(e) => setSelectedParcel({ ...selectedParcel, deliveryMenId: e.target.value })}
+            onChange={(e) =>
+              setSelectedParcel({ ...selectedParcel, deliveryMenId: e.target.value })
+            }
+            value={selectedParcel.deliveryMenId || ""}
           >
+            <option value="">Select a delivery man</option>
             {deliveryMen.map((man) => (
               <option key={man._id} value={man._id}>
-                {man.name}
+                {man.displayName}
               </option>
             ))}
           </select>
@@ -127,6 +149,7 @@ const AllParcels = () => {
           <label>Approximate Delivery Date:</label>
           <input
             type="date"
+            value={deliveryDate}
             onChange={(e) => setDeliveryDate(e.target.value)}
           />
 

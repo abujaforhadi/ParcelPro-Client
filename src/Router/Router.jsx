@@ -15,6 +15,7 @@ import AllParcels from "../Dashboard/Admin/AllParcels";
 import StatisticsPage from "../Dashboard/Admin/StatisticsPage";
 import AdminRouter from "./AdminRouter";
 import AllDeliveryMen from "../Dashboard/Admin/AllDeliveryMen";
+import DeliveryList from "../Dashboard/DeliveryMan/DeliveryList";
 
 const router = createBrowserRouter([
     {
@@ -66,6 +67,11 @@ const router = createBrowserRouter([
                     {
                         path: "myprofile",
                         element: <MyProfile />
+                    },
+                    // delivery man routes
+                    {
+                        path: "mydeliverylist",
+                        element: <DeliveryList />
                     }
                 ]
             }
