@@ -26,7 +26,7 @@ const Profile = () => {
   const onSubmit = async (formData) => {
     try {
       const response = await axios.patch(
-        `http://localhost:3000/userupdate/${userDB._id}`,
+        `https://parcelpro-server.vercel.app/userupdate/${userDB._id}`,
         formData
       );
       toast.success("Profile updated successfully!");

@@ -3,7 +3,7 @@ import axios from "axios";
 import { AuthContext } from "../../Auth/AuthProvider";
 
 const MyReviews = () => {
-  const { userDB } = useContext(AuthContext); // Access userDB context value
+  const { userDB } = useContext(AuthContext); 
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -12,7 +12,7 @@ const MyReviews = () => {
     const fetchReviews = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get("http://localhost:3000/myreviews", {
+        const response = await axios.get("https://parcelpro-server.vercel.app/myreviews", {
           params: { deliveryManId: userDB._id },
         });
         setReviews(response.data);

@@ -17,7 +17,7 @@ const DeliveryList = () => {
     const fetchParcels = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get("http://localhost:3000/allparcels");
+        const response = await axios.get("https://parcelpro-server.vercel.app/allparcels");
         const assignedParcels = response.data.filter(
           (parcel) => parcel.deliveryMenId === loggedInDeliveryManId
         );
@@ -38,14 +38,14 @@ const DeliveryList = () => {
       setIsLoading(true);
 
       // Update the parcel status
-      await axios.put(`http://localhost:3000/updateparcel/${parcelId}`, {
+      await axios.put(`https://parcelpro-server.vercel.app/updateparcel/${parcelId}`, {
         status: newStatus,
         deliveryMenId: loggedInDeliveryManId,
       });
 
       // If status is "Delivered", increment parcelsDelivered
       if (newStatus === "Delivered") {
-        await axios.patch(`http://localhost:3000/userupdate/${userDB._id}`, {
+        await axios.patch(`https://parcelpro-server.vercel.app/userupdate/${userDB._id}`, {
           parcelsDelivered: (userDB.parcelsDelivered || 0) + 1,
         });
 

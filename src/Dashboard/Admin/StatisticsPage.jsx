@@ -9,7 +9,7 @@ const StatisticsPage = () => {
   useEffect(() => {
     const fetchStatistics = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/admin/stats"); 
+        const response = await axios.get("https://parcelpro-server.vercel.app/admin/stats"); 
         const data = response.data; 
 
         setBookingsData(data.bookingsByDate);

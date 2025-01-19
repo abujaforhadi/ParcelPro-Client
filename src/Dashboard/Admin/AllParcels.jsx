@@ -24,8 +24,8 @@ const AllParcels = () => {
         setIsLoading(true);
 
         const [parcelsResponse, usersResponse] = await Promise.all([
-          axios.get("http://localhost:3000/allparcels"),
-          axios.get("http://localhost:3000/users"),
+          axios.get("https://parcelpro-server.vercel.app/allparcels"),
+          axios.get("https://parcelpro-server.vercel.app/users"),
         ]);
 
         setParcels(parcelsResponse.data);
@@ -51,7 +51,7 @@ const AllParcels = () => {
 
     try {
       setIsLoading(true);
-      await axios.put(`http://localhost:3000/updateparcel/${parcelId}`, {
+      await axios.put(`https://parcelpro-server.vercel.app/updateparcel/${parcelId}`, {
         status: "On The Way",
         deliveryMenId: deliveryManId,
         approximateDeliveryDate: deliveryDate,
@@ -80,7 +80,7 @@ const AllParcels = () => {
   const handleSearch = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("http://localhost:3000/allparcels", {
+      const response = await axios.get("https://parcelpro-server.vercel.app/allparcels", {
         params: { startDate: searchStartDate, endDate: searchEndDate },
       });
       setParcels(response.data);

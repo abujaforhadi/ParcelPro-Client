@@ -15,7 +15,7 @@ const MyParcels = () => {
   useEffect(() => {
     const fetchParcels = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/myparcels", {
+        const response = await axios.get("https://parcelpro-server.vercel.app/myparcels", {
           params: { email: user.email },
         });
         console.log(response.data);
@@ -35,7 +35,7 @@ const MyParcels = () => {
   const handleCancel = async (id) => {
     if (window.confirm("Are you sure you want to cancel this booking?")) {
       try {
-        const response = await axios.patch(`http://localhost:3000/parcels/${id}`, { status: "canceled" });
+        const response = await axios.patch(`https://parcelpro-server.vercel.app/parcels/${id}`, { status: "canceled" });
         if (response.status === 200) {
           setParcels(prev =>
             prev.map(parcel => (parcel._id === id ? { ...parcel, status: "canceled" } : parcel))
@@ -58,7 +58,7 @@ const MyParcels = () => {
         feedback: feedback, // Feedback Text
       };
   
-      const response = await axios.post("http://localhost:3000/reviews", reviewData);
+      const response = await axios.post("https://parcelpro-server.vercel.app/reviews", reviewData);
       if (response.status === 200) {
         setModalOpen(false);
         alert("Review submitted successfully");

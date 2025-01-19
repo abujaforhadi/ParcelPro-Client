@@ -30,7 +30,7 @@ const AuthProvider = ({ children }) => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       setUser(userCredential?.user);
 
-      await axios.post("http://localhost:3000/users", {
+      await axios.post("https://parcelpro-server.vercel.app/users", {
         email,
         displayName,
         photoURL,
@@ -65,7 +65,7 @@ const AuthProvider = ({ children }) => {
       const user = result.user;
       setUser(user);
 
-      await axios.post("http://localhost:3000/users", {
+      await axios.post("https://parcelpro-server.vercel.app/users", {
         email: user?.email,
         displayName: user?.displayName,
         photoURL: user?.photoURL,
@@ -109,7 +109,7 @@ const AuthProvider = ({ children }) => {
       if (user?.email) {
         setLoading(true); // Ensure loading is true during role verification
         try {
-          const response = await axios.get("http://localhost:3000/adminUsers", {
+          const response = await axios.get("https://parcelpro-server.vercel.app/adminUsers", {
             params: { email: user.email },
           });
           setUserDB(response.data)
@@ -131,12 +131,12 @@ const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser?.email) {
         setUser(currentUser);
-        // await axios.post("http://localhost:3000/jwt", {
+        // await axios.post("https://parcelpro-server.vercel.app/jwt", {
         //   email: currentUser?.email,
         // }, { withCredentials: true });
       } else {
         setUser(null);
-        await axios.post("http://localhost:3000/logout", {}, { withCredentials: true });
+        await axios.post("https://parcelpro-server.vercel.app/logout", {}, { withCredentials: true });
       }
       setLoading(false);
     });

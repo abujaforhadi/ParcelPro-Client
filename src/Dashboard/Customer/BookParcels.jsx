@@ -32,7 +32,7 @@ const BookParcel = () => {
       parcelData.name = user?.displayName;
       parcelData.email = user?.email;
 
-      const response = await axios.post("http://localhost:3000/bookparcel", parcelData, {
+      const response = await axios.post("https://parcelpro-server.vercel.app/bookparcel", parcelData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

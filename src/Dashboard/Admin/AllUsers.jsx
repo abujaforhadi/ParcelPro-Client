@@ -7,7 +7,7 @@ const AllUsers = () => {
   // Fetch users from the API
   useEffect(() => {
     axios
-      .get("http://localhost:3000/users")
+      .get("https://parcelpro-server.vercel.app/users")
       .then((response) => setUsers(response.data))
       .catch((error) => console.error("Error fetching users:", error));
   }, []);
@@ -15,7 +15,7 @@ const AllUsers = () => {
   // Handle role change
   const handleRoleChange = (userId, newRole) => {
     axios
-      .patch(`http://localhost:3000/users/${userId}`, { role: newRole })
+      .patch(`https://parcelpro-server.vercel.app/users/${userId}`, { role: newRole })
       .then(() => {
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
@@ -30,7 +30,7 @@ const AllUsers = () => {
   const handleDelete = (userId) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       axios
-        .delete(`http://localhost:3000/users/${userId}`)
+        .delete(`https://parcelpro-server.vercel.app/users/${userId}`)
         .then(() => {
           setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
         })
