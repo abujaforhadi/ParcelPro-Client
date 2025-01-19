@@ -5,15 +5,19 @@ const AllDeliveryMen = () => {
   const [deliveryMen, setDeliveryMen] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3000/users").then((response) => {
-      const allUsers = response.data;
-      const deliveryMenData = allUsers.filter(user => user.role === "deliveryman");
-      setDeliveryMen(deliveryMenData);
-      console.log(deliveryMenData);
-    }).catch(error => {
-      console.error("Error fetching delivery men:", error);
-    });
-  }, []);
+    const fetchDeliveryMen = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/users");
+        const allUsers = response.data;
+        const deliveryMenData = allUsers.filter((user) => user.role === "deliveryman");
+        setDeliveryMen(deliveryMenData);
+      } catch (error) {
+        console.error("Error fetching delivery men:", error);
+      }
+    };
+
+    fetchDeliveryMen();
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   return (
     <div className="container mx-auto p-6">
@@ -31,16 +35,17 @@ const AllDeliveryMen = () => {
           {deliveryMen.length > 0 ? (
             deliveryMen.map((man) => (
               <tr key={man._id}>
-                <td className="border border-gray-300 px-4 py-2">{man.displayName
-                }</td>
-                <td className="border border-gray-300 px-4 py-2">{man.phone}</td>
+                <td className="border border-gray-300 px-4 py-2">{man.displayName}</td>
+                <td className="border border-gray-300 px-4 py-2">{man.contact}</td>
                 <td className="border border-gray-300 px-4 py-2">{man.parcelsDelivered || 0}</td>
                 <td className="border border-gray-300 px-4 py-2">{man.averageReview || "N/A"}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td className="border border-gray-300 px-4 py-2" colSpan="4">No delivery men found</td>
+              <td className="border border-gray-300 px-4 py-2" colSpan="4">
+                No delivery men found
+              </td>
             </tr>
           )}
         </tbody>

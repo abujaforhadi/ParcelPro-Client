@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router"; 
+import Loading from "../../Components/Loading";
+import ParcelModal from "../../Components/ParcelModal";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AllParcels = () => {
   const [parcels, setParcels] = useState([]);
@@ -10,7 +15,8 @@ const AllParcels = () => {
   const [searchEndDate, setSearchEndDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  
+
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchParcelsAndDeliveryMen = async () => {
@@ -28,6 +34,7 @@ const AllParcels = () => {
         );
       } catch (err) {
         setError("Failed to fetch data.");
+        toast.error("Failed to load data.");
       } finally {
         setIsLoading(false);
       }
@@ -37,6 +44,11 @@ const AllParcels = () => {
   }, []);
 
   const handleAssign = async (parcelId, deliveryManId) => {
+    if (!deliveryManId || !deliveryDate) {
+      toast.warning("Please select a delivery man and date.");
+      return;
+    }
+
     try {
       setIsLoading(true);
       await axios.put(`http://localhost:3000/updateparcel/${parcelId}`, {
@@ -54,8 +66,12 @@ const AllParcels = () => {
       );
 
       setSelectedParcel(null);
+      toast.success("Parcel assigned successfully!");
+
+      navigate("/"); // Navigate to the home page after successful assignment
     } catch (err) {
       console.error("Error assigning delivery man:", err);
+      toast.error("Failed to assign parcel.");
     } finally {
       setIsLoading(false);
     }
@@ -70,99 +86,89 @@ const AllParcels = () => {
       setParcels(response.data);
     } catch (err) {
       setError("Search failed.");
+      toast.error("Failed to search parcels.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  if (isLoading) return <Loading />;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div>
-      <h1>All Parcels</h1>
+    <div className="container mx-auto p-6">
+      <ToastContainer position="top-right" autoClose={3000} />
+      <h1 className="text-2xl font-semibold mb-4">All Parcels</h1>
 
       {/* Search Bar */}
-      <div className="search-bar">
+      <div className="flex gap-4 mb-6">
         <input
           type="date"
           value={searchStartDate}
           onChange={(e) => setSearchStartDate(e.target.value)}
+          className="border p-2 rounded-md"
         />
         <input
           type="date"
           value={searchEndDate}
           onChange={(e) => setSearchEndDate(e.target.value)}
+          className="border p-2 rounded-md"
         />
-        <button onClick={handleSearch}>Search</button>
+        <button
+          onClick={handleSearch}
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+        >
+          Search
+        </button>
       </div>
 
-      {/* Table to display parcels */}
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">User’s Name</th>
-            <th scope="col">User’s Phone</th>
-            <th scope="col">Booking Date</th>
-            <th scope="col">Requested Delivery Date</th>
-            <th scope="col">Cost</th>
-            <th scope="col">Status</th>
-            <th scope="col">Manage</th>
-          </tr>
-        </thead>
-        <tbody>
-          {parcels.map((parcel) => (
-            <tr key={parcel._id}>
-              <td>{parcel.name}</td>
-              <td>{parcel.phoneNumber}</td>
-              <td>{parcel.bookingDate}</td>
-              <td>{parcel.requestedDeliveryDate}</td>
-              <td>{parcel.price} Tk</td>
-              <td>{parcel.status}</td>
-              <td>
-                <button onClick={() => setSelectedParcel(parcel)}>Manage</button>
-              </td>
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full border border-gray-200">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="px-4 py-2">User’s Name</th>
+              <th className="px-4 py-2">User’s Phone</th>
+              <th className="px-4 py-2">Booking Date</th>
+              <th className="px-4 py-2">Requested Delivery Date</th>
+              <th className="px-4 py-2">Cost</th>
+              <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2">Manage</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Modal to assign delivery man */}
-      {selectedParcel && (
-        <div className="modal">
-          <h2>Manage Parcel</h2>
-          <label>Delivery Man:</label>
-          <select
-            onChange={(e) =>
-              setSelectedParcel({ ...selectedParcel, deliveryMenId: e.target.value })
-            }
-            value={selectedParcel.deliveryMenId || ""}
-          >
-            <option value="">Select a delivery man</option>
-            {deliveryMen.map((man) => (
-              <option key={man._id} value={man._id}>
-                {man.displayName}
-              </option>
+          </thead>
+          <tbody>
+            {parcels.map((parcel) => (
+              <tr key={parcel._id} className="border-t">
+                <td className="px-4 py-2">{parcel.name}</td>
+                <td className="px-4 py-2">{parcel.phoneNumber}</td>
+                <td className="px-4 py-2">{parcel.bookingDate}</td>
+                <td className="px-4 py-2">{parcel.requestedDeliveryDate}</td>
+                <td className="px-4 py-2">{parcel.price} Tk</td>
+                <td className="px-4 py-2">{parcel.status}</td>
+                <td className="px-4 py-2">
+                  <button
+                    onClick={() => setSelectedParcel(parcel)}
+                    className="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700"
+                  >
+                    Manage
+                  </button>
+                </td>
+              </tr>
             ))}
-          </select>
+          </tbody>
+        </table>
+      </div>
 
-          <label>Approximate Delivery Date:</label>
-          <input
-            type="date"
-            value={deliveryDate}
-            onChange={(e) => setDeliveryDate(e.target.value)}
-          />
-
-          <button
-            onClick={() =>
-              handleAssign(selectedParcel._id, selectedParcel.deliveryMenId)
-            }
-          >
-            Assign
-          </button>
-
-          <button onClick={() => setSelectedParcel(null)}>Close</button>
-        </div>
+      {/* Modal */}
+      {selectedParcel && (
+        <ParcelModal
+          parcel={selectedParcel}
+          deliveryMen={deliveryMen}
+          deliveryDate={deliveryDate}
+          setDeliveryDate={setDeliveryDate}
+          onClose={() => setSelectedParcel(null)}
+          onAssign={handleAssign}
+        />
       )}
     </div>
   );

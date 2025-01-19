@@ -56,7 +56,7 @@ const DashBoard = () => {
       </div>
 
       {/* Main Content Section */}
-      <div className="w-3/4 p-6 bg-gray-100">
+      <div className="w-3/4 p-6">
         <Outlet />
       </div>
     </div>
