@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ApexCharts from "react-apexcharts";
 import axios from "axios";
+import Loading from "@/Components/Loading";
 
 const StatisticsPage = () => {
   const [bookingsData, setBookingsData] = useState([]);
@@ -121,7 +122,7 @@ const StatisticsPage = () => {
     },
   };
 
-  if (loading) return <p>Loading statistics...</p>;
+  if (loading) return <Loading/>;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
