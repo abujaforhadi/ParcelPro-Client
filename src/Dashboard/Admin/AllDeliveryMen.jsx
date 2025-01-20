@@ -23,8 +23,9 @@ const AllDeliveryMen = () => {
           const reviewsForMan = allReviews.filter((review) => review.deliveryManId === man._id);
           
           // Calculate total score and average rating
-          const totalScore = reviewsForMan.reduce((acc, review) => acc + review.rating, 0);
+          const totalScore = reviewsForMan.reduce((acc, review) => acc + Number(review.rating), 0);
           const averageReview = reviewsForMan.length > 0 ? (totalScore / reviewsForMan.length).toFixed(2) : "N/A";
+          // console.log(totalScore);
           
           return { ...man, averageReview };
         });
