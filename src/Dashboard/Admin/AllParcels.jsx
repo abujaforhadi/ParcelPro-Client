@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router"; 
+import { useNavigate } from "react-router";
 import Loading from "../../Components/Loading";
 import ParcelModal from "../../Components/ParcelModal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const AllParcels = () => {
   const [parcels, setParcels] = useState([]);
@@ -16,7 +23,7 @@ const AllParcels = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchParcelsAndDeliveryMen = async () => {
@@ -68,7 +75,7 @@ const AllParcels = () => {
       setSelectedParcel(null);
       toast.success("Parcel assigned successfully!");
 
-      navigate("/"); // Navigate to the home page after successful assignment
+      navigate("/");
     } catch (err) {
       console.error("Error assigning delivery man:", err);
       toast.error("Failed to assign parcel.");
@@ -98,68 +105,71 @@ const AllParcels = () => {
   return (
     <div className="container mx-auto p-6">
       <ToastContainer position="top-right" autoClose={3000} />
-      <h1 className="text-2xl font-semibold mb-4">All Parcels</h1>
+      <div className="flex justify-between">
+        <h1 className="text-2xl font-semibold mb-4">All Parcels</h1>
 
-      {/* Search Bar */}
-      <div className="flex gap-4 mb-6">
-        <input
-          type="date"
-          value={searchStartDate}
-          onChange={(e) => setSearchStartDate(e.target.value)}
-          className="border p-2 rounded-md"
-        />
-        <input
-          type="date"
-          value={searchEndDate}
-          onChange={(e) => setSearchEndDate(e.target.value)}
-          className="border p-2 rounded-md"
-        />
-        <button
-          onClick={handleSearch}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-        >
-          Search
-        </button>
+        <div className="flex gap-4 mb-6">
+          <input
+            type="date"
+            value={searchStartDate}
+            onChange={(e) => setSearchStartDate(e.target.value)}
+            className="border p-2 rounded-md"
+          />
+          <input
+            type="date"
+            value={searchEndDate}
+            onChange={(e) => setSearchEndDate(e.target.value)}
+            className="border p-2 rounded-md"
+          />
+          <button
+            onClick={handleSearch}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            Search
+          </button>
+        </div>
       </div>
 
-      {/* Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-200">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-4 py-2">User’s Name</th>
-              <th className="px-4 py-2">User’s Phone</th>
-              <th className="px-4 py-2">Booking Date</th>
-              <th className="px-4 py-2">Requested Delivery Date</th>
-              <th className="px-4 py-2">Cost</th>
-              <th className="px-4 py-2">Status</th>
-              <th className="px-4 py-2">Manage</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableCell>User’s Name</TableCell>
+              <TableCell>User’s Phone</TableCell>
+              <TableCell>Booking Date</TableCell>
+              <TableCell>Requested Delivery Date</TableCell>
+              <TableCell>Cost</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Manage</TableCell>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {parcels.map((parcel) => (
-              <tr key={parcel._id} className="border-t">
-                <td className="px-4 py-2">{parcel.name}</td>
-                <td className="px-4 py-2">{parcel.phoneNumber}</td>
-                <td className="px-4 py-2">{parcel.bookingDate}</td>
-                <td className="px-4 py-2">{parcel.requestedDeliveryDate}</td>
-                <td className="px-4 py-2">{parcel.price} Tk</td>
-                <td className="px-4 py-2">{parcel.status}</td>
-                <td className="px-4 py-2">
+              <TableRow key={parcel._id}>
+                <TableCell>{parcel.name}</TableCell>
+                <TableCell>{parcel.phoneNumber}</TableCell>
+                <TableCell>{parcel.bookingDate}</TableCell>
+                <TableCell>{parcel.requestedDeliveryDate}</TableCell>
+                <TableCell>{parcel.price} Tk</TableCell>
+                <TableCell>{parcel.status}</TableCell>
+                <TableCell>
                   <button
                     onClick={() => setSelectedParcel(parcel)}
-                    className="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700"
+                    disabled={parcel.status === "Delivered" || parcel.status === "Cancelled"}
+                    className={`bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 ${parcel.status === "Delivered" || parcel.status === "Cancelled"
+                        ? "cursor-not-allowed opacity-50"
+                        : ""
+                      }`}
                   >
                     Manage
                   </button>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
-      {/* Modal */}
       {selectedParcel && (
         <ParcelModal
           parcel={selectedParcel}

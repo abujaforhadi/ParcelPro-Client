@@ -1,16 +1,15 @@
 import React, { useContext } from "react";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
-import { NavLink, Outlet } from "react-router"; 
+import { NavLink, Outlet } from "react-router"; // Corrected import for NavLink
 import { AuthContext } from "../Auth/AuthProvider";
 
 const DashBoard = () => {
   const { isAdmin, isCustomer, isDeliveryman } = useContext(AuthContext);
-  // console.log(isAdmin,isCustomer,isDeliveryman);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex flex-col md:flex-row h-screen">
       {/* Sidebar Section */}
-      <div className="w-1/4 ">
+      <div className="md:w-64 w-full bg-gray-800 text-white">
         <Sidebar>
           <Menu
             menuItemStyles={{
@@ -18,6 +17,7 @@ const DashBoard = () => {
                 [`&.active`]: {
                   backgroundColor: "#13395e",
                   color: "#b6c8d9",
+                  fontWeight: "bold",
                 },
               },
             }}
@@ -49,14 +49,12 @@ const DashBoard = () => {
                 <MenuItem component={<NavLink to="profile" />}>Profile</MenuItem>
               </>
             )}
-
-            {/* Common menu */}
           </Menu>
         </Sidebar>
       </div>
 
       {/* Main Content Section */}
-      <div className="w-3/4 p-6">
+      <div className="md:flex-1 p-6 overflow-auto">
         <Outlet />
       </div>
     </div>
