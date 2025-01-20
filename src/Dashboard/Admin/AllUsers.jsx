@@ -1,8 +1,28 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const AllUsers = () => {
   const [users, setUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage] = useState(5); // Set to 5 users per page
 
   // Fetch users from the API
   useEffect(() => {
@@ -38,24 +58,33 @@ const AllUsers = () => {
     }
   };
 
+  // Get current users for the page
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Users</h1>
-      <table className="w-full border border-gray-300">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="border px-4 py-2">Display Name</th>
-            <th className="border px-4 py-2">Email</th>
-            <th className="border px-4 py-2">Role</th>
-            <th className="border px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user._id} className="text-center">
-              <td className="border px-4 py-2">{user.displayName}</td>
-              <td className="border px-4 py-2">{user.email}</td>
-              <td className="border px-4 py-2">
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableCell>Display Name</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Role</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {currentUsers.map((user) => (
+            <TableRow key={user._id}>
+              <TableCell>{user.displayName}</TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>
                 <select
                   value={user.role}
                   onChange={(e) => handleRoleChange(user._id, e.target.value)}
@@ -65,19 +94,48 @@ const AllUsers = () => {
                   <option value="admin">Admin</option>
                   <option value="deliveryman">Deliveryman</option>
                 </select>
-              </td>
-              <td className="border px-4 py-2">
+              </TableCell>
+              <TableCell>
                 <button
                   onClick={() => handleDelete(user._id)}
                   className="bg-red-500 text-white px-3 py-1 rounded"
                 >
                   Delete
                 </button>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
+
+      {/* Pagination */}
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+            />
+          </PaginationItem>
+          {Array.from({ length: Math.ceil(users.length / usersPerPage) }, (_, index) => (
+            <PaginationItem key={index + 1}>
+              <PaginationLink
+                href="#"
+                onClick={() => paginate(index + 1)}
+                className={currentPage === index + 1 ? "bg-blue-500 text-white" : ""}
+              >
+                {index + 1}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          <PaginationItem>
+            <PaginationNext
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === Math.ceil(users.length / usersPerPage)}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 };
