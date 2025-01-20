@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Auth/AuthProvider";
 import { useNavigate } from "react-router";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"; // Import ShadCN components
 
 const MyParcels = () => {
   const { user } = useContext(AuthContext);
@@ -49,11 +50,11 @@ const MyParcels = () => {
   const handleReviewSubmit = async () => {
     try {
       const reviewData = {
-        deliveryManId: selectedParcel.deliveryMenId, 
-        giverName: user.displayName, 
+        deliveryManId: selectedParcel.deliveryMenId,
+        giverName: user.displayName,
         giverImage: user.photoURL,
         rating: rating,
-        feedback: feedback, 
+        feedback: feedback,
       };
 
       const response = await axios.post("https://parcelpro-server.vercel.app/reviews", reviewData);
@@ -66,80 +67,80 @@ const MyParcels = () => {
     }
   };
 
-
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">My Parcels</h1>
+      <div className="grid grid-cols-2 ">
+        <h1 className="text-3xl font-bold mb-4">My Parcels</h1>
 
-      {/* Filter Dropdown */}
-      <div className="mb-4">
-        <label htmlFor="statusFilter" className="mr-2">Filter by Status: </label>
-        <select
-          id="statusFilter"
-          className="border p-2 rounded-md"
-          onChange={(e) => setFilter(e.target.value)}
-          value={filter}
-        >
-          <option value="all">All</option>
-          <option value="pending">Pending</option>
-          <option value="On The Way">On The Way</option>
-          <option value="Delivered">Delivered</option>
-          <option value="canceled">Canceled</option>
-        </select>
+        {/* Filter Dropdown */}
+        <div className="mb-4">
+          <label htmlFor="statusFilter" className="mr-2">Filter by Status: </label>
+          <select
+            id="statusFilter"
+            className="border p-2 rounded-md"
+            onChange={(e) => setFilter(e.target.value)}
+            value={filter}
+          >
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="On The Way">On The Way</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
       </div>
 
-      {/* Parcels Table */}
-      <table className="w-full table-auto border-collapse">
-        <thead>
-          <tr>
-            <th className="border p-2">Parcel Type</th>
-            <th className="border p-2">Requested Delivery Date</th>
-            <th className="border p-2">Approx Delivery Date</th>
-            <th className="border p-2">Booking Date</th>
-            <th className="border p-2">Delivery Men ID</th>
-            <th className="border p-2">Status</th>
-            <th className="border p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
+      {/* Parcels Table using ShadCN components */}
+      <Table className="w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead>Parcel Type</TableHead>
+            <TableHead>Requested Delivery Date</TableHead>
+            <TableHead>Approx Delivery Date</TableHead>
+            <TableHead>Booking Date</TableHead>
+            <TableHead>Delivery Men ID</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {filteredParcels.map(parcel => (
-            <tr key={parcel._id}>
-              <td className="border p-2">{parcel.parcelType}</td>
-              <td className="border p-2">{parcel.requestedDeliveryDate}</td>
-              <td className="border p-2">{parcel.approxDeliveryDate || "N/A"}</td>
-              <td className="border p-2">{new Date(parcel.bookingDate).toLocaleDateString()}</td>
-              <td className="border p-2">{parcel.deliveryMenId || "N/A"}</td>
-              <td className="border p-2">{parcel.status}</td>
-              <td className="border p-2">
+            <TableRow key={parcel._id}>
+              <TableCell>{parcel.parcelType}</TableCell>
+              <TableCell>{parcel.requestedDeliveryDate}</TableCell>
+              <TableCell>{parcel.approxDeliveryDate || "N/A"}</TableCell>
+              <TableCell>{new Date(parcel.bookingDate).toLocaleDateString()}</TableCell>
+              <TableCell>{parcel.deliveryMenId || "N/A"}</TableCell>
+              <TableCell>{parcel.status}</TableCell>
+              <TableCell >
                 {parcel.status === "pending" ? (
                   <>
                     <button
-                      className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 mr-2"
+                      className="px-3  text-center py-1 bg-red-500 text-white rounded-md hover:bg-red-600 mr-2"
                       onClick={() => handleCancel(parcel._id)}
                     >
                       Cancel
                     </button>
                     <button
-                      className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                      className="px-3 mr-2 text-center py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                       onClick={() => navigate(`/dashboard/updateParcel/${parcel._id}`, { state: { parcel } })}
                     >
                       Update
                     </button>
-
                   </>
                 ) : (
                   <>
-                    <button className="px-3 py-1 bg-gray-500 text-white rounded-md mr-2" disabled>
+                    <button className="px-3 mr-2 text-center py-1 bg-gray-500 text-white rounded-md mr-2" disabled>
                       Cancel
                     </button>
-                    <button className="px-3 py-1 bg-gray-500 text-white rounded-md" disabled>
+                    <button className="px-3 mr-2 text-center py-1 bg-gray-500 text-white rounded-md" disabled>
                       Update
                     </button>
                   </>
                 )}
                 {parcel.status === "Delivered" && (
                   <button
-                    className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 mr-2"
+                    className="px-3 mr-2 text-center py-1 bg-green-500 text-white rounded-md hover:bg-green-600 mr-2"
                     onClick={() => {
                       setSelectedParcel(parcel);
                       setModalOpen(true);
@@ -148,14 +149,20 @@ const MyParcels = () => {
                     Review
                   </button>
                 )}
-                <button className="px-3 py-1 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">
+                <button
+                  className={`px-3 mr-2 text-center py-1 rounded-md ${parcel.status === "Delivered" || parcel.status === "Cancelled"
+                    ? "bg-gray-500 text-white cursor-not-allowed"
+                    : "bg-yellow-500 text-white hover:bg-yellow-600"
+                    }`}
+                  disabled={parcel.status === "Delivered" || parcel.status === "Cancelled"}
+                >
                   Pay
                 </button>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
 
       {/* Review Modal */}
       {modalOpen && (
