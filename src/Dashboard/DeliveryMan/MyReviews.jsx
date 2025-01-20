@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Auth/AuthProvider";
+import Loading from "@/Components/Loading";
 
 const MyReviews = () => {
   const { userDB } = useContext(AuthContext); 
@@ -28,7 +29,7 @@ const MyReviews = () => {
     }
   }, [userDB]);
 
-  if (isLoading) return <p className="text-center text-gray-500">Loading...</p>;
+  if (isLoading) return <Loading/>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (

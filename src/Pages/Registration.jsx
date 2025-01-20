@@ -1,38 +1,24 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../Auth/AuthProvider";
+import { useForm } from "react-hook-form";
 
 const Registration = () => {
   const navigate = useNavigate();
   const { createNewUser, ProfileUpdate, loginWithGoogle } = useContext(AuthContext);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    photo: "",
-    email: "",
-    password: "",
-  });
   const [error, setError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
+  
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  
   const handleGoogleLogin = () => {
     loginWithGoogle()
       .then(() => navigate("/"))
       .catch(() => setError("Google login failed. Try again later."));
   };
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-    const { name, photo, email, password } = formData;
-
-    if (password.length < 6) {
-      setPasswordError("Password must be at least 6 characters long.");
-      return;
-    }
+  const handleSignUp = async (data) => {
+    const { name, photo, email, password } = data;
 
     try {
       await createNewUser(email, password, name, photo);
@@ -63,7 +49,7 @@ const Registration = () => {
           {error && (
             <div className="mb-4 text-red-500 text-center">{error}</div>
           )}
-          <form onSubmit={handleSignUp}>
+          <form onSubmit={handleSubmit(handleSignUp)}>
             <div className="mb-4">
               <label
                 htmlFor="name"
@@ -75,12 +61,11 @@ const Registration = () => {
                 id="name"
                 name="name"
                 type="text"
-                value={formData.name}
-                onChange={handleChange}
                 placeholder="Your Name"
                 className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
-                required
+                {...register("name", { required: "Name is required" })}
               />
+              {errors.name && <p className="text-red-500 text-sm mt-2">{errors.name.message}</p>}
             </div>
             <div className="mb-4">
               <label
@@ -93,12 +78,17 @@ const Registration = () => {
                 id="email"
                 name="email"
                 type="email"
-                value={formData.email}
-                onChange={handleChange}
                 placeholder="someone@example.com"
                 className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
-                required
+                {...register("email", { 
+                  required: "Email is required", 
+                  pattern: {
+                    value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+                    message: "Please enter a valid email"
+                  }
+                })}
               />
+              {errors.email && <p className="text-red-500 text-sm mt-2">{errors.email.message}</p>}
             </div>
             <div className="mb-4">
               <label
@@ -111,15 +101,14 @@ const Registration = () => {
                 id="password"
                 name="password"
                 type="password"
-                value={formData.password}
-                onChange={handleChange}
                 placeholder="********"
                 className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
-                required
+                {...register("password", { 
+                  required: "Password is required", 
+                  minLength: { value: 6, message: "Password must be at least 6 characters long" }
+                })}
               />
-              {passwordError && (
-                <p className="text-red-500 text-sm mt-2">{passwordError}</p>
-              )}
+              {errors.password && <p className="text-red-500 text-sm mt-2">{errors.password.message}</p>}
             </div>
             <div className="mb-4">
               <label
@@ -132,10 +121,9 @@ const Registration = () => {
                 id="photo"
                 name="photo"
                 type="url"
-                value={formData.photo}
-                onChange={handleChange}
                 placeholder="Photo URL"
                 className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
+                {...register("photo")}
               />
             </div>
             <button

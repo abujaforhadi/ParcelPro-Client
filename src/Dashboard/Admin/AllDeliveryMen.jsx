@@ -7,22 +7,17 @@ const AllDeliveryMen = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch all users
         const response = await axios.get("https://parcelpro-server.vercel.app/users");
         const allUsers = response.data;
         const deliveryMenData = allUsers.filter((user) => user.role === "deliveryman");
     
-        // Fetch all reviews
         const reviewResponse = await axios.get("https://parcelpro-server.vercel.app/allreview");
-        const allReviews = reviewResponse.data.reviews;  // Access the reviews array directly
-        console.log("All Reviews:", allReviews);  // Check the structure
+        const allReviews = reviewResponse.data.reviews; 
+        console.log("All Reviews:", allReviews);  
     
-        // Calculate average review for each delivery man
         const updatedDeliveryMen = deliveryMenData.map((man) => {
-          // Filter reviews that match the delivery man
           const reviewsForMan = allReviews.filter((review) => review.deliveryManId === man._id);
           
-          // Calculate total score and average rating
           const totalScore = reviewsForMan.reduce((acc, review) => acc + Number(review.rating), 0);
           const averageReview = reviewsForMan.length > 0 ? (totalScore / reviewsForMan.length).toFixed(2) : "N/A";
           // console.log(totalScore);

@@ -4,10 +4,13 @@ import axios from "axios";
 import { AuthContext } from "../../Auth/AuthProvider";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router";
 
 const BookParcel = () => {
   const { user } = useContext(AuthContext);
   const [price, setPrice] = useState(50);
+  const navigate = useNavigate();
+
 
   const {
     register,
@@ -40,6 +43,8 @@ const BookParcel = () => {
 
       if (response.status === 200) {
         toast.success("Parcel booked successfully!");
+        setTimeout(() => navigate("/"), 2000);
+        
       } else {
         toast.error(response.data.message || "Error booking parcel");
       }

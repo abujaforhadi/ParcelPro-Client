@@ -3,18 +3,20 @@ import { AuthContext } from "../Auth/AuthProvider";
 import { Link, useLocation, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
   const { login, loginWithGoogle } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignIn = (e) => {
-    e.preventDefault();
+  // Using react-hook-form
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const handleSignIn = (data) => {
+    const { email, password } = data;
     setIsLoading(true);
 
     login(email, password)
@@ -58,7 +60,7 @@ const Login = () => {
           <h2 className="text-2xl font-semibold text-gray-800 dark:text-white text-center mb-6">
             Welcome Back
           </h2>
-          <form onSubmit={handleSignIn}>
+          <form onSubmit={handleSubmit(handleSignIn)}>
             <div className="mb-4">
               <label
                 htmlFor="email"
@@ -69,12 +71,11 @@ const Login = () => {
               <input
                 id="email"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...register("email", { required: "Email is required" })}
                 placeholder="someone@example.com"
                 className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
-                required
               />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
             </div>
             <div className="mb-4">
               <label
@@ -86,12 +87,11 @@ const Login = () => {
               <input
                 id="password"
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                {...register("password", { required: "Password is required" })}
                 placeholder="********"
                 className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
-                required
               />
+              {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
             </div>
             <div className="flex items-center justify-between mb-4">
               <label className="flex items-center text-sm text-gray-600 dark:text-gray-400">
