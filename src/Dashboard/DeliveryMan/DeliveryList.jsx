@@ -3,11 +3,14 @@ import axios from "axios";
 import { AuthContext } from "../../Auth/AuthProvider";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import MapGL, { Marker } from "react-map-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-import { Table } from "@/components/ui/table"; 
-import { Button } from "@/components/ui/button"; 
+import { Table } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import Loading from "@/Components/Loading";
+import Map, { Marker } from "react-map-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+
 
 const DeliveryList = () => {
   const { userDB } = useContext(AuthContext);
@@ -16,19 +19,15 @@ const DeliveryList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [modalData, setModalData] = useState(null);
-  const [viewport, setViewport] = useState({
-    latitude: 23.8103, // Default latitude (e.g., Dhaka)
-    longitude: 90.4125, // Default longitude
-    zoom: 10,
-    width: "100%",
-    height: "300px",
-  });
+  const [mapLocation, setMapLocation] = useState(null);
 
   useEffect(() => {
     const fetchParcels = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get("https://parcelpro-server.vercel.app/allparcels");
+        const response = await axios.get(
+          "https://parcelpro-server.vercel.app/allparcels"
+        );
         const assignedParcels = response.data.filter(
           (parcel) => parcel.deliveryMenId === loggedInDeliveryManId
         );
@@ -44,17 +43,64 @@ const DeliveryList = () => {
     fetchParcels();
   }, [loggedInDeliveryManId]);
 
-  const handleViewLocation = (location) => {
-    setViewport({
-      ...viewport,
-      latitude: location.lat,
-      longitude: location.lng,
-    });
-    setModalData({ type: "map", location });
+  const handleStatusChange = async (parcelId, newStatus) => {
+    try {
+      setIsLoading(true);
+
+      await axios.put(
+        `https://parcelpro-server.vercel.app/updateparcel/${parcelId}`,
+        {
+          status: newStatus,
+          deliveryMenId: loggedInDeliveryManId,
+        }
+      );
+
+      if (newStatus === "Delivered") {
+        await axios.patch(
+          `https://parcelpro-server.vercel.app/userupdate/${userDB._id}`,
+          {
+            parcelsDelivered: (userDB.parcelsDelivered || 0) + 1,
+          }
+        );
+
+        toast.success("Parcel delivered! Parcel count updated.");
+      }
+
+      setParcels((prevParcels) =>
+        prevParcels.map((parcel) =>
+          parcel._id === parcelId ? { ...parcel, status: newStatus } : parcel
+        )
+      );
+      toast.success(`Status updated to ${newStatus}!`);
+    } catch (err) {
+      console.error("Failed to update status:", err);
+      toast.error("Failed to update status!");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const openModal = (parcelId, newStatus) => {
+    setModalData({ parcelId, newStatus });
   };
 
   const closeModal = () => {
     setModalData(null);
+  };
+
+  const confirmStatusChange = () => {
+    if (modalData) {
+      handleStatusChange(modalData.parcelId, modalData.newStatus);
+    }
+    closeModal();
+  };
+
+  const handleViewLocation = (longitude, latitude) => {
+    setMapLocation({ longitude, latitude });
+  };
+
+  const closeMapModal = () => {
+    setMapLocation(null);
   };
 
   const getStatusColor = (status) => {
@@ -85,6 +131,9 @@ const DeliveryList = () => {
           <tr className="text-sm font-medium text-gray-600 dark:text-gray-400">
             <th>Booked User’s Name</th>
             <th>Receiver's Name</th>
+            <th>Booked User’s Phone</th>
+            <th>Requested Delivery Date</th>
+            <th>Approx. Delivery Date</th>
             <th>Receiver's Phone</th>
             <th>Receiver's Address</th>
             <th>Status</th>
@@ -93,19 +142,51 @@ const DeliveryList = () => {
         </thead>
         <tbody>
           {parcels.map((parcel) => (
-            <tr key={parcel._id} className="text-sm text-gray-700 dark:text-gray-300">
+            <tr
+              key={parcel._id}
+              className="text-sm text-gray-700 dark:text-gray-300"
+            >
               <td>{parcel.name}</td>
               <td>{parcel.receiverName}</td>
+              <td>{parcel.phoneNumber}</td>
+              <td>{parcel.requestedDeliveryDate}</td>
+              <td>{parcel.approximateDeliveryDate}</td>
               <td>{parcel.receiverPhoneNumber}</td>
               <td>{parcel.deliveryAddress}</td>
               <td className={getStatusColor(parcel.status)}>{parcel.status}</td>
-              <td>
+              <td className="space-x-2">
                 <Button
-                  onClick={() => handleViewLocation(parcel.location)}
+                  onClick={() =>
+                    handleViewLocation(
+                      parcel.deliveryAddressLongitude,
+                      parcel.deliveryAddressLatitude
+                    )
+                  }
+                  disabled={
+                    !parcel.deliveryAddressLongitude ||
+                    !parcel.deliveryAddressLatitude
+                  }
                   variant="outline"
+                  color="cyan"
                   size="sm"
                 >
                   View Location
+                </Button>
+                <Button
+                  onClick={() => openModal(parcel._id, "Cancelled")}
+                  disabled={parcel.status === "Delivered"}
+                  variant="destructive"
+                  size="sm"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => openModal(parcel._id, "Delivered")}
+                  disabled={parcel.status === "Delivered"}
+                  variant="success"
+                  size="sm"
+                >
+                  Deliver
                 </Button>
               </td>
             </tr>
@@ -113,41 +194,61 @@ const DeliveryList = () => {
         </tbody>
       </Table>
 
-      {/* Modal */}
-      {modalData?.type === "map" && (
+      {/* Status Change Modal */}
+      {modalData && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-lg shadow-lg max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4">Parcel Location</h3>
-            <div className="w-full h-64">
-              <MapGL
-                {...viewport}
-                mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
-                onViewportChange={(nextViewport) => setViewport(nextViewport)}
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">
+              Confirm Action
+            </h3>
+            <p className="mb-6 text-gray-700">
+              Are you sure you want to change the status to{" "}
+              <strong>{modalData.newStatus}</strong>?
+            </p>
+            <div className="flex justify-end space-x-2">
+              <Button
+                onClick={closeModal}
+                variant="outline"
+                color="gray"
+                size="sm"
               >
-                <Marker
-                  latitude={modalData.location.lat}
-                  longitude={modalData.location.lng}
-                >
-                  <div className="text-red-500">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      className="bi bi-geo-alt-fill"
-                      viewBox="0 0 16 16"
-                      width="24"
-                      height="24"
-                    >
-                      <path d="M8 0a5.53 5.53 0 0 1 5.5 5.5C13.5 9.292 8 16 8 16S2.5 9.292 2.5 5.5A5.53 5.53 0 0 1 8 0zm0 7.5A2 2 0 1 0 8 3a2 2 0 0 0 0 4.5z" />
-                    </svg>
-                  </div>
-                </Marker>
-              </MapGL>
-            </div>
-            <div className="flex justify-end mt-4">
-              <Button onClick={closeModal} variant="outline">
-                Close
+                Cancel
+              </Button>
+              <Button onClick={confirmStatusChange} variant="primary" size="sm">
+                Confirm
               </Button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Map Modal */}
+      {mapLocation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg h-96 relative">
+            <Map
+              initialViewState={{
+                latitude: mapLocation.latitude,
+                longitude: mapLocation.longitude,
+                zoom: 12,
+              }}
+              style={{ width: "100%", height: "100%" }}
+              mapStyle="mapbox://styles/mapbox/streets-v11"
+              mapboxAccessToken={MAPBOX_TOKEN}
+            >
+              <Marker
+                latitude={mapLocation.latitude}
+                longitude={mapLocation.longitude}
+              >
+                📍
+              </Marker>
+            </Map>
+            <Button
+              onClick={closeMapModal}
+              className="absolute top-2 right-2 bg-red-500 text-white rounded"
+            >
+              Close
+            </Button>
           </div>
         </div>
       )}

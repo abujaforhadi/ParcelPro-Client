@@ -20,7 +20,7 @@ const MyParcels = () => {
         const response = await axios.get("https://parcelpro-server.vercel.app/myparcels", {
           params: { email: user.email },
         });
-        console.log(response.data);
+        // console.log(response.data);
         setParcels(response.data);
       } catch (error) {
         console.error("Failed to fetch parcels:", error);
