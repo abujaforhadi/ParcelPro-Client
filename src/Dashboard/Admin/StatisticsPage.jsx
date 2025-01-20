@@ -5,29 +5,63 @@ import axios from "axios";
 const StatisticsPage = () => {
   const [bookingsData, setBookingsData] = useState([]);
   const [comparisonData, setComparisonData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchStatistics = async () => {
+    const fetchParcels = async () => {
       try {
-        const response = await axios.get("https://parcelpro-server.vercel.app/admin/stats"); 
-        const data = response.data; 
+        const response = await axios.get("https://parcelpro-server.vercel.app/allparcels");
+        const parcels = response.data;
 
-        setBookingsData(data.bookingsByDate);
-        setComparisonData(data.parcelsComparison);
-      } catch (error) {
-        console.error("Failed to fetch statistics:", error);
+        const bookingsCount = parcels.reduce((acc, parcel) => {
+          const date = parcel.bookingDate;
+          acc[date] = (acc[date] || 0) + 1;
+          return acc;
+        }, {});
+
+        const bookingsChartData = Object.entries(bookingsCount).map(([date, count]) => ({
+          date,
+          count,
+        }));
+
+        setBookingsData(bookingsChartData);
+
+        const comparisonCount = parcels.reduce((acc, parcel) => {
+          const date = parcel.bookingDate;
+          if (!acc[date]) {
+            acc[date] = { booked: 0, delivered: 0 };
+          }
+          acc[date].booked += 1;
+          if (parcel.status === "Delivered") {
+            acc[date].delivered += 1;
+          }
+          return acc;
+        }, {});
+
+        const comparisonChartData = Object.entries(comparisonCount).map(([date, counts]) => ({
+          date,
+          booked: counts.booked,
+          delivered: counts.delivered,
+        }));
+
+        setComparisonData(comparisonChartData);
+      } catch (err) {
+        console.error("Failed to fetch parcel data:", err);
+        setError("Failed to load data. Please try again later.");
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchStatistics();
+    fetchParcels();
   }, []);
 
-  // Prepare data for the charts
-  const bookingsChartData = {
+  const bookingsChartConfig = {
     series: [
       {
         name: "Bookings",
-        data: bookingsData.map((item) => item.bookings),
+        data: bookingsData.map((item) => item.count),
       },
     ],
     options: {
@@ -37,6 +71,14 @@ const StatisticsPage = () => {
       },
       xaxis: {
         categories: bookingsData.map((item) => item.date),
+        title: {
+          text: "Booking Date",
+        },
+      },
+      yaxis: {
+        title: {
+          text: "Number of Bookings",
+        },
       },
       title: {
         text: "Bookings by Date",
@@ -45,14 +87,14 @@ const StatisticsPage = () => {
     },
   };
 
-  const comparisonChartData = {
+  const comparisonChartConfig = {
     series: [
       {
-        name: "Booked",
+        name: "Booked Parcels",
         data: comparisonData.map((item) => item.booked),
       },
       {
-        name: "Delivered",
+        name: "Delivered Parcels",
         data: comparisonData.map((item) => item.delivered),
       },
     ],
@@ -63,31 +105,44 @@ const StatisticsPage = () => {
       },
       xaxis: {
         categories: comparisonData.map((item) => item.date),
+        title: {
+          text: "Booking Date",
+        },
+      },
+      yaxis: {
+        title: {
+          text: "Number of Parcels",
+        },
       },
       title: {
-        text: "Booked vs Delivered Parcels",
+        text: "Booked vs Delivered Parcels by Date",
         align: "center",
       },
     },
   };
 
+  if (loading) return <p>Loading statistics...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
   return (
     <div>
-      <h1 className="text-3xl font-bold">Statistics</h1>
+      <h1 className="text-3xl font-bold mb-6">Statistics</h1>
 
-      <div className="mt-6">
+      <div className="mb-10">
+        <h2 className="text-2xl font-semibold">Bookings by Date</h2>
         <ApexCharts
-          options={bookingsChartData.options}
-          series={bookingsChartData.series}
+          options={bookingsChartConfig.options}
+          series={bookingsChartConfig.series}
           type="bar"
           height={350}
         />
       </div>
 
-      <div className="mt-6">
+      <div>
+        <h2 className="text-2xl font-semibold">Booked vs Delivered Parcels</h2>
         <ApexCharts
-          options={comparisonChartData.options}
-          series={comparisonChartData.series}
+          options={comparisonChartConfig.options}
+          series={comparisonChartConfig.series}
           type="line"
           height={350}
         />

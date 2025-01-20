@@ -9,7 +9,7 @@ const DashBoard = () => {
   return (
     <div className="flex flex-col md:flex-row h-screen">
       {/* Sidebar Section */}
-      <div className="md:w-64 w-full bg-gray-800 text-white">
+      <div className="md:w-64 w-full ">
         <Sidebar>
           <Menu
             menuItemStyles={{
