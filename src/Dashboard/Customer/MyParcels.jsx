@@ -3,6 +3,7 @@ import axios from "axios";
 import { AuthContext } from "../../Auth/AuthProvider";
 import { useNavigate } from "react-router";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"; // Import ShadCN components
+import { toast } from "react-toastify";
 
 const MyParcels = () => {
   const { user } = useContext(AuthContext);
@@ -40,6 +41,7 @@ const MyParcels = () => {
           setParcels(prev =>
             prev.map(parcel => (parcel._id === id ? { ...parcel, status: "canceled" } : parcel))
           );
+          toast.success("Parcel canceled successfully.");
         }
       } catch (error) {
         console.error("Failed to cancel parcel:", error);
@@ -60,7 +62,7 @@ const MyParcels = () => {
       const response = await axios.post("https://parcelpro-server.vercel.app/reviews", reviewData);
       if (response.status === 200) {
         setModalOpen(false);
-        alert("Review submitted successfully");
+        toast.success("Review submitted successfully");
       }
     } catch (error) {
       console.error("Failed to submit review:", error);
