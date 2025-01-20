@@ -140,7 +140,7 @@ const MyParcels = () => {
                 )}
                 {parcel.status === "Delivered" && (
                   <button
-                    className="px-3 mr-2 text-center py-1 bg-green-500 text-white rounded-md hover:bg-green-600 mr-2"
+                    className="px-3  text-center py-1 bg-green-500 text-white rounded-md hover:bg-green-600 mr-2"
                     onClick={() => {
                       setSelectedParcel(parcel);
                       setModalOpen(true);
