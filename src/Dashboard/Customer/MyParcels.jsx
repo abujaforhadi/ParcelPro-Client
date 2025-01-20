@@ -130,7 +130,7 @@ const MyParcels = () => {
                   </>
                 ) : (
                   <>
-                    <button className="px-3 mr-2 text-center py-1 bg-gray-500 text-white rounded-md mr-2" disabled>
+                    <button className="px-3 mr-2 text-center py-1 bg-gray-500 text-white rounded-md " disabled>
                       Cancel
                     </button>
                     <button className="px-3 mr-2 text-center py-1 bg-gray-500 text-white rounded-md" disabled>
