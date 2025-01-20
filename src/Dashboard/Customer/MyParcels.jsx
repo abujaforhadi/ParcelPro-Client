@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Auth/AuthProvider";
+import { useNavigate } from "react-router";
 
 const MyParcels = () => {
   const { user } = useContext(AuthContext);
@@ -8,10 +9,10 @@ const MyParcels = () => {
   const [filter, setFilter] = useState("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedParcel, setSelectedParcel] = useState(null);
+  const navigate = useNavigate();
   const [rating, setRating] = useState(5);
   const [feedback, setFeedback] = useState("");
 
-  // Fetch parcels on component mount
   useEffect(() => {
     const fetchParcels = async () => {
       try {
@@ -28,10 +29,8 @@ const MyParcels = () => {
     fetchParcels();
   }, [user.email]);
 
-  // Filter parcels based on the status selected
   const filteredParcels = filter === "all" ? parcels : parcels.filter(parcel => parcel.status === filter);
 
-  // Cancel parcel booking
   const handleCancel = async (id) => {
     if (window.confirm("Are you sure you want to cancel this booking?")) {
       try {
@@ -47,17 +46,16 @@ const MyParcels = () => {
     }
   };
 
-  // Handle review submission
   const handleReviewSubmit = async () => {
     try {
       const reviewData = {
-        deliveryManId: selectedParcel.deliveryMenId, // Delivery Man ID
-        giverName: user.displayName, // User's Name
-        giverImage: user.photoURL, // User's Image
-        rating: rating, // Rating
-        feedback: feedback, // Feedback Text
+        deliveryManId: selectedParcel.deliveryMenId, 
+        giverName: user.displayName, 
+        giverImage: user.photoURL,
+        rating: rating,
+        feedback: feedback, 
       };
-  
+
       const response = await axios.post("https://parcelpro-server.vercel.app/reviews", reviewData);
       if (response.status === 200) {
         setModalOpen(false);
@@ -67,12 +65,12 @@ const MyParcels = () => {
       console.error("Failed to submit review:", error);
     }
   };
-  
+
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">My Parcels</h1>
-      
+
       {/* Filter Dropdown */}
       <div className="mb-4">
         <label htmlFor="statusFilter" className="mr-2">Filter by Status: </label>
@@ -84,9 +82,8 @@ const MyParcels = () => {
         >
           <option value="all">All</option>
           <option value="pending">Pending</option>
-          <option value="on the way">On The Way</option>
-          <option value="delivered">Delivered</option>
-          <option value="returned">Returned</option>
+          <option value="On The Way">On The Way</option>
+          <option value="Delivered">Delivered</option>
           <option value="canceled">Canceled</option>
         </select>
       </div>
@@ -122,9 +119,13 @@ const MyParcels = () => {
                     >
                       Cancel
                     </button>
-                    <button className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                    <button
+                      className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                      onClick={() => navigate(`/dashboard/updateParcel/${parcel._id}`, { state: { parcel } })}
+                    >
                       Update
                     </button>
+
                   </>
                 ) : (
                   <>
