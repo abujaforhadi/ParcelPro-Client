@@ -93,27 +93,42 @@ const Features = () => {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 px-4 lg:px-20">
-                {/* Statistic Cards */}
-                {[{ label: "Parcels Booked", value: stats.parcelsBooked },
-                { label: "Parcels Delivered", value: stats.parcelsDelivered },
-                { label: "Registered Users", value: stats.registeredUsers },
-                ].map((stat, idx) => (
-                    <Card
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 lg:px-20">
+                {[{
+                    label: "Parcels Booked",
+                    value: stats.parcelsBooked,
+                    icon: "🛒", 
+                },
+                {
+                    label: "Parcels Delivered",
+                    value: stats.parcelsDelivered,
+                    icon: "📦", 
+                },
+                {
+                    label: "Registered Users",
+                    value: stats.registeredUsers,
+                    icon: "👥", 
+                }].map((stat, idx) => (
+                    <div
                         key={idx}
-                        className="shadow-lg hover:shadow-2xl transition-all flex items-center justify-center py-12"
+                        className="bg-white shadow-lg rounded-md p-6 flex items-center space-x-6"
                         data-aos="fade-up"
                         data-aos-delay={100 * (idx + 1)}
                     >
-                        <CardHeader className="text-center">
-                            <h3 className="text-6xl font-extrabold text-blue-500 mb-4">
+                        <div className="flex-shrink-0 bg-blue-100 text-blue-600 w-16 h-16 flex items-center justify-center rounded-full">
+                            <span className="text-2xl">{stat.icon}</span>
+                        </div>
+
+                        <div>
+                            <h3 className="text-4xl font-extrabold text-gray-800">
                                 <CountUp end={stat.value} duration={2.5} separator="," />
                             </h3>
-                            <p className="text-lg text-gray-600">{stat.label}</p>
-                        </CardHeader>
-                    </Card>
+                            <p className="text-gray-500">{stat.label}</p>
+                        </div>
+                    </div>
                 ))}
             </div>
+
         </section>
     );
 };
