@@ -1,9 +1,14 @@
 import React from "react";
-// react icons
 import { CiSearch } from "react-icons/ci";
 import { FaCircleCheck } from "react-icons/fa6";
+import "aos/dist/aos.css";
+import Aos from "aos";
 
 const Hero = () => {
+    React.useEffect(() => {
+        Aos.init({ duration: 1000 });
+    }, []);
+
     return (
         <div
             className="w-full h-full rounded-md"
@@ -16,7 +21,7 @@ const Hero = () => {
         >
             {/* header */}
             <header className="flex lg:flex-row flex-col-reverse gap-[50px] lg:gap-10 items-center px-8 py-1">
-                <div className="w-full lg:w-[55%]">
+                <div className="w-full lg:w-[55%]" data-aos="fade-right">
                     <h1 className="text-[40px] sm:text-[60px] font-[600] leading-[45px] sm:leading-[70px]">
                         Bangladesh's <span className="text-[#90caf9]">Fastest</span> Delivery Service
                     </h1>
@@ -48,7 +53,7 @@ const Hero = () => {
 
                     </div>
                 </div>
-                <div className="w-full sm:w-[40%]">
+                <div className="w-full sm:w-[40%]" data-aos="fade-left">
                     <img src="hero.svg" alt="Delivery" className="w-full h-full" />
                 </div>
             </header>

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { IoIosArrowUp } from "react-icons/io";
+import { IoIosArrowUp, IoMdNotificationsOutline } from "react-icons/io";
 import { TbLogout2 } from "react-icons/tb";
 import {  AiOutlineFire } from "react-icons/ai";
 import { FiUser } from "react-icons/fi";
@@ -39,14 +39,16 @@ const Navbar = () => {
             <Link to="/">
                 <img src="/logo.png" alt="logo" className="w-[60px]" />
             </Link>
-            <ul className="items-center gap-[20px] text-[1rem] text-[#424242] lg:flex hidden">
+            {/* <ul className="items-center gap-[20px] text-[1rem] text-[#424242] lg:flex hidden">
                 <li className="flex items-center gap-[5px] cursor-pointer">
                     <AiOutlineFire className="text-[1.1rem] text-gray-600" />
                     Features
                 </li>
-            </ul>
+            </ul> */}
 
             <div className="flex items-center gap-[15px]">
+                <button><IoMdNotificationsOutline className="w-7 h-7"/>
+                </button>
                 {user ? (
                     <div
                         className="flex items-center gap-[10px] cursor-pointer relative"
@@ -98,6 +100,7 @@ const Navbar = () => {
                        
                     </Link>
                 )}
+
             </div>
         </nav>
     );
