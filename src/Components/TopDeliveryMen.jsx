@@ -86,7 +86,7 @@ const TopDeliveryMen = () => {
     }
 
     return (
-        <section className="py-16 bg-gray-50">
+        <section className="py-16">
             <div className="text-center mb-12">
                 <h2 className="text-5xl font-extrabold text-gray-800 mb-4">Top Delivery Men</h2>
                 <p className="text-lg text-gray-600">These are the top 3 delivery men based on their performance and ratings.</p>

@@ -41,8 +41,7 @@ const Features = () => {
     }, []);
 
     return (
-        <section className="py-16 bg-gray-50">
-            {/* Section Header */}
+        <section className="py-16 ">
             <div className="text-center mb-12" data-aos="fade-up">
                 <h2 className="text-5xl font-extrabold text-gray-800 mb-4">Why Choose Us?</h2>
                 <p className="text-lg text-gray-600">
@@ -50,9 +49,8 @@ const Features = () => {
                 </p>
             </div>
 
-            {/* Features Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 px-4 lg:px-20">
-                {/* Feature Cards */}
+                
                 {[{
                     icon: <FaShippingFast className="text-6xl text-blue-600" />,
                     title: "Super Fast Delivery",
@@ -85,7 +83,6 @@ const Features = () => {
                 ))}
             </div>
 
-            {/* Statistics Section */}
             <div className="text-center mt-20 mb-12" data-aos="fade-up">
                 <h2 className="text-5xl font-extrabold text-gray-800 mb-4">Our Impact</h2>
                 <p className="text-lg text-gray-600">
