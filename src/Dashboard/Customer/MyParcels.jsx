@@ -96,6 +96,7 @@ const MyParcels = () => {
       <Table className="w-full">
         <TableHeader>
           <TableRow>
+            <TableHead>Tracking ID</TableHead>
             <TableHead>Parcel Type</TableHead>
             <TableHead>Requested Delivery Date</TableHead>
             <TableHead>Approx Delivery Date</TableHead>
@@ -108,6 +109,7 @@ const MyParcels = () => {
         <TableBody>
           {filteredParcels.map(parcel => (
             <TableRow key={parcel._id}>
+              <TableCell>{parcel._id}</TableCell>
               <TableCell>{parcel.parcelType}</TableCell>
               <TableCell>{parcel.requestedDeliveryDate}</TableCell>
               <TableCell>{parcel.approxDeliveryDate || "N/A"}</TableCell>
