@@ -18,13 +18,37 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { toast } from "react-toastify"; // Toast for success/error notifications
+
+const Modal = ({ message, onConfirm, onCancel }) => (
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50 z-10">
+    <div className="bg-white p-6 rounded shadow-lg max-w-sm w-full">
+      <h3 className="text-lg font-semibold">{message}</h3>
+      <div className="mt-4 flex justify-between">
+        <button
+          onClick={onConfirm}
+          className="bg-red-500 text-white px-4 py-2 rounded"
+        >
+          Confirm
+        </button>
+        <button
+          onClick={onCancel}
+          className="bg-gray-300 px-4 py-2 rounded"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
 const AllUsers = () => {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage] = useState(5); // Set to 5 users per page
+  const [usersPerPage] = useState(5);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
-  // Fetch users from the API
   useEffect(() => {
     axios
       .get("https://parcelpro-server.vercel.app/users")
@@ -32,11 +56,20 @@ const AllUsers = () => {
       .catch((error) => console.error("Error fetching users:", error));
   }, []);
 
-  // Handle role change
   const handleRoleChange = (userId, newRole) => {
+    const token = localStorage.getItem("token");
+
     axios
-      .patch(`https://parcelpro-server.vercel.app/users/${userId}`, { role: newRole })
-      .then(() => {
+      .patch(
+        `https://parcelpro-server.vercel.app/users/${userId}`,
+        { role: newRole },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => {
         setUsers((prevUsers) =>
           prevUsers.map((user) =>
             user._id === userId ? { ...user, role: newRole } : user
@@ -46,24 +79,43 @@ const AllUsers = () => {
       .catch((error) => console.error("Error updating role:", error));
   };
 
-  // Handle delete user
-  const handleDelete = (userId) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
+  const handleDelete = () => {
+    if (userToDelete) {
+      const token = localStorage.getItem("token");
       axios
-        .delete(`https://parcelpro-server.vercel.app/users/${userId}`)
-        .then(() => {
-          setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+        .delete(`https://parcelpro-server.vercel.app/users/${userToDelete}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         })
-        .catch((error) => console.error("Error deleting user:", error));
+        .then(() => {
+          setUsers((prevUsers) =>
+            prevUsers.filter((user) => user._id !== userToDelete)
+          );
+          setIsModalOpen(false);
+          toast.success("User deleted successfully!");
+        })
+        .catch((error) => {
+          console.error("Error deleting user:", error);
+          toast.error("Failed to delete user.");
+        });
     }
   };
 
-  // Get current users for the page
+  const openModal = (userId) => {
+    setUserToDelete(userId);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setUserToDelete(null);
+  };
+
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
-  // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
@@ -97,7 +149,7 @@ const AllUsers = () => {
               </TableCell>
               <TableCell>
                 <button
-                  onClick={() => handleDelete(user._id)}
+                  onClick={() => openModal(user._id)}
                   className="bg-red-500 text-white px-3 py-1 rounded"
                 >
                   Delete
@@ -108,7 +160,6 @@ const AllUsers = () => {
         </TableBody>
       </Table>
 
-      {/* Pagination */}
       <Pagination>
         <PaginationContent>
           <PaginationItem>
@@ -136,6 +187,14 @@ const AllUsers = () => {
           </PaginationItem>
         </PaginationContent>
       </Pagination>
+
+      {isModalOpen && (
+        <Modal
+          message="Are you sure you want to delete this user?"
+          onConfirm={handleDelete}
+          onCancel={closeModal}
+        />
+      )}
     </div>
   );
 };

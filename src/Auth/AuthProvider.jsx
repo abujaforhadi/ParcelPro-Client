@@ -10,7 +10,7 @@ import {
 } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Auth from "../firebase/Firebase.config"; 
+import Auth from "../firebase/Firebase.config";
 import axios from "axios";
 
 const auth = Auth;
@@ -20,9 +20,9 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userDB, setUserDB] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false); 
-  const [isCustomer, setCustomer] = useState(false); 
-  const [isDeliveryman, setDeliveryman] = useState(false); 
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isCustomer, setCustomer] = useState(false);
+  const [isDeliveryman, setDeliveryman] = useState(false);
 
   const createNewUser = async (email, password, displayName, photoURL) => {
     setLoading(true);
@@ -119,24 +119,32 @@ const AuthProvider = ({ children }) => {
         } catch (error) {
           console.error("Error verifying admin status:", error);
         } finally {
-          setLoading(false); 
+          setLoading(false);
         }
       }
     };
-  
+
     checkAdmin();
   }, [user]);
-  
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser?.email) {
         setUser(currentUser);
-        // await axios.post("https://parcelpro-server.vercel.app/jwt", {
-        //   email: currentUser?.email,
-        // }, { withCredentials: true });
+
+        const userInfo = { email: currentUser.email };
+        await axios.post('https://parcelpro-server.vercel.app/jwt', userInfo)
+          .then(res => {
+            if (res.data.token) {
+              localStorage.setItem('token', res.data.token);
+              setLoading(false);
+            }
+          })
+
+
       } else {
-        setUser(null);
-        await axios.post("https://parcelpro-server.vercel.app/logout", {}, { withCredentials: true });
+        localStorage.removeItem('token');
+        setLoading(false);
       }
       setLoading(false);
     });
@@ -154,7 +162,7 @@ const AuthProvider = ({ children }) => {
     isCustomer,
     ProfileUpdate,
     login,
-    isAdmin, 
+    isAdmin,
     isDeliveryman,
     userDB
   };
