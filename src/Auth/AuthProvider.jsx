@@ -107,7 +107,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAdmin = async () => {
       if (user?.email) {
-        setLoading(true); // Ensure loading is true during role verification
+        setLoading(true);
         try {
           const response = await axios.get("https://parcelpro-server.vercel.app/adminUsers", {
             params: { email: user.email },

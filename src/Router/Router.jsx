@@ -18,6 +18,7 @@ import DeliveryList from "../Dashboard/DeliveryMan/DeliveryList";
 import MyReviews from "../Dashboard/DeliveryMan/Myreviews";
 import Profile from "../Dashboard/DeliveryMan/Profile";
 import UpdateParcel from "../Dashboard/Customer/UpdateParcel";
+import DeliveryManRouter from "./DeliveryManRouter";
 
 const router = createBrowserRouter([
     {
@@ -51,12 +52,15 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "users",
-                        element: <AllUsers />
+                        element: <AdminRouter><AllUsers /></AdminRouter>
                     },
+                  
                     {
                         path: "allparcels",
-                        element: <AllParcels />
+                        element: <AdminRouter><AllParcels /></AdminRouter>
                     },
+                  
+                   
                     // Customer routes
                     {
                         path: "bookparcel",
@@ -78,15 +82,15 @@ const router = createBrowserRouter([
                     // delivery man routes
                     {
                         path: "mydeliverylist",
-                        element: <DeliveryList />
+                        element: <DeliveryManRouter><DeliveryList /></DeliveryManRouter> 
                     },
                     {
                         path: "myreviews",
-                        element: <MyReviews />
+                        element: <DeliveryManRouter><MyReviews /></DeliveryManRouter> 
                     },
                     {
                         path: "profile",
-                        element: <Profile />
+                        element: <DeliveryManRouter><Profile /></DeliveryManRouter> 
                     },
                 ]
             }
