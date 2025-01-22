@@ -38,6 +38,11 @@ const MyParcels = () => {
     setSelectedParcelId(id);
     setCancelModalOpen(true);
   };
+  const handlePayment = (parcel) => {
+    navigate("/dashboard/payment", { state: { parcel } });
+  };
+  
+
 
   const handleConfirmCancel = async () => {
     try {
@@ -47,7 +52,7 @@ const MyParcels = () => {
           prev.map(parcel => (parcel._id === selectedParcelId ? { ...parcel, status: "Canceled" } : parcel))
         );
         toast.success("Parcel Canceled successfully.");
-        setCancelModalOpen(false); 
+        setCancelModalOpen(false);
       }
     } catch (error) {
       console.error("Failed to cancel parcel:", error);
@@ -160,14 +165,16 @@ const MyParcels = () => {
                   </button>
                 )}
                 <button
+                  onClick={() => handlePayment(parcel)}
                   className={`px-3 mr-2 text-center py-1 rounded-md ${parcel.status === "Delivered" || parcel.status === "Canceled"
-                    ? "bg-gray-500 text-white cursor-not-allowed"
-                    : "bg-yellow-500 text-white hover:bg-yellow-600"
+                      ? "bg-gray-500 text-white cursor-not-allowed"
+                      : "bg-yellow-500 text-white hover:bg-yellow-600"
                     }`}
                   disabled={parcel.status === "Delivered" || parcel.status === "Canceled"}
                 >
                   Pay
                 </button>
+
               </TableCell>
             </TableRow>
           ))}

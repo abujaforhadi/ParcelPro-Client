@@ -19,6 +19,8 @@ import MyReviews from "../Dashboard/DeliveryMan/Myreviews";
 import Profile from "../Dashboard/DeliveryMan/Profile";
 import UpdateParcel from "../Dashboard/Customer/UpdateParcel";
 import DeliveryManRouter from "./DeliveryManRouter";
+import Payment from "@/Dashboard/Payment";
+import PaymentSuccess from "@/Dashboard/PaymentSuccess";
 
 const router = createBrowserRouter([
     {
@@ -91,6 +93,14 @@ const router = createBrowserRouter([
                     {
                         path: "profile",
                         element: <DeliveryManRouter><Profile /></DeliveryManRouter> 
+                    },
+                    {
+                        path: "payment",
+                        element:<Payment />
+                    },
+                    {
+                        path: "payment-success",
+                        element:<PaymentSuccess />
                     },
                 ]
             }

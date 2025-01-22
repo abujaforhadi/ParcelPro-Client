@@ -11,7 +11,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
-
 const DeliveryList = () => {
   const { userDB } = useContext(AuthContext);
   const loggedInDeliveryManId = userDB._id;
@@ -79,6 +78,7 @@ const DeliveryList = () => {
       setIsLoading(false);
     }
   };
+
 
   const openModal = (parcelId, newStatus) => {
     setModalData({ parcelId, newStatus });
@@ -188,69 +188,12 @@ const DeliveryList = () => {
                 >
                   Deliver
                 </Button>
+                
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
-
-      {modalData && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">
-              Confirm Action
-            </h3>
-            <p className="mb-6 text-gray-700">
-              Are you sure you want to change the status to{" "}
-              <strong>{modalData.newStatus}</strong>?
-            </p>
-            <div className="flex justify-end space-x-2">
-              <Button
-                onClick={closeModal}
-                variant="outline"
-                color="gray"
-                size="sm"
-              >
-                Cancel
-              </Button>
-              <Button onClick={confirmStatusChange} variant="primary" size="sm">
-                Confirm
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Map Modal */}
-      {mapLocation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg h-96 relative">
-            <Map
-              initialViewState={{
-                latitude: mapLocation.latitude,
-                longitude: mapLocation.longitude,
-                zoom: 12,
-              }}
-              style={{ width: "100%", height: "100%" }}
-              mapStyle="mapbox://styles/mapbox/streets-v11"
-              mapboxAccessToken={MAPBOX_TOKEN}
-            >
-              <Marker
-                latitude={mapLocation.latitude}
-                longitude={mapLocation.longitude}
-              >
-                📍
-              </Marker>
-            </Map>
-            <Button
-              onClick={closeMapModal}
-              className="absolute top-2 right-2 bg-red-500 text-white rounded"
-            >
-              Close
-            </Button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
