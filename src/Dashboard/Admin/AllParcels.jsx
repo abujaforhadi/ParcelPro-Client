@@ -155,8 +155,9 @@ const AllParcels = () => {
                 <TableCell>
                   <button
                     onClick={() => setSelectedParcel(parcel)}
-                    disabled={parcel.status === "Delivered" || parcel.status === "Cancelled"}
-                    className={`bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 ${parcel.status === "Delivered" || parcel.status === "Cancelled"
+                    
+                    disabled={parcel.status === "Delivered" || parcel.status === "Canceled" }
+                    className={`bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 ${parcel.status === "Delivered" || parcel.status === "Canceled"
                         ? "cursor-not-allowed opacity-50"
                         : ""
                       }`}

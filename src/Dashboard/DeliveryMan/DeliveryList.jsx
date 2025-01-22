@@ -107,7 +107,7 @@ const DeliveryList = () => {
     switch (status) {
       case "Delivered":
         return "text-green-600 font-bold";
-      case "Cancelled":
+      case "Canceled":
         return "text-red-600 font-bold";
       case "In Progress":
         return "text-yellow-600 font-bold";
@@ -173,7 +173,7 @@ const DeliveryList = () => {
                   View Location
                 </Button>
                 <Button
-                  onClick={() => openModal(parcel._id, "Cancelled")}
+                  onClick={() => openModal(parcel._id, "Canceled")}
                   disabled={parcel.status === "Delivered"}
                   variant="destructive"
                   size="sm"
@@ -194,7 +194,6 @@ const DeliveryList = () => {
         </tbody>
       </Table>
 
-      {/* Status Change Modal */}
       {modalData && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">

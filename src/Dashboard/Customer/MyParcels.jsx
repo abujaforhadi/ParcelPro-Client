@@ -9,11 +9,13 @@ const MyParcels = () => {
   const { user } = useContext(AuthContext);
   const [parcels, setParcels] = useState([]);
   const [filter, setFilter] = useState("all");
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [selectedParcelId, setSelectedParcelId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedParcel, setSelectedParcel] = useState(null);
-  const navigate = useNavigate();
   const [rating, setRating] = useState(5);
   const [feedback, setFeedback] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchParcels = async () => {
@@ -21,7 +23,6 @@ const MyParcels = () => {
         const response = await axios.get("https://parcelpro-server.vercel.app/myparcels", {
           params: { email: user.email },
         });
-        // console.log(response.data);
         setParcels(response.data);
       } catch (error) {
         console.error("Failed to fetch parcels:", error);
@@ -33,19 +34,24 @@ const MyParcels = () => {
 
   const filteredParcels = filter === "all" ? parcels : parcels.filter(parcel => parcel.status === filter);
 
-  const handleCancel = async (id) => {
-    if (window.confirm("Are you sure you want to cancel this booking?")) {
-      try {
-        const response = await axios.patch(`https://parcelpro-server.vercel.app/parcels/${id}`, { status: "canceled" });
-        if (response.status === 200) {
-          setParcels(prev =>
-            prev.map(parcel => (parcel._id === id ? { ...parcel, status: "canceled" } : parcel))
-          );
-          toast.success("Parcel canceled successfully.");
-        }
-      } catch (error) {
-        console.error("Failed to cancel parcel:", error);
+  const openCancelModal = (id) => {
+    setSelectedParcelId(id);
+    setCancelModalOpen(true);
+  };
+
+  const handleConfirmCancel = async () => {
+    try {
+      const response = await axios.patch(`https://parcelpro-server.vercel.app/parcelcancel/${selectedParcelId}`, { status: "Canceled" });
+      if (response.status === 200) {
+        setParcels(prev =>
+          prev.map(parcel => (parcel._id === selectedParcelId ? { ...parcel, status: "Canceled" } : parcel))
+        );
+        toast.success("Parcel Canceled successfully.");
+        setCancelModalOpen(false); 
       }
+    } catch (error) {
+      console.error("Failed to cancel parcel:", error);
+      toast.error("Failed to cancel parcel.");
     }
   };
 
@@ -84,10 +90,10 @@ const MyParcels = () => {
             value={filter}
           >
             <option value="all">All</option>
-            <option value="pending">Pending</option>
+            <option value="Pending">Pending</option>
             <option value="On The Way">On The Way</option>
             <option value="Delivered">Delivered</option>
-            <option value="Cancelled">Cancelled</option>
+            <option value="Canceled">Canceled</option>
           </select>
         </div>
       </div>
@@ -112,16 +118,16 @@ const MyParcels = () => {
               <TableCell>{parcel._id}</TableCell>
               <TableCell>{parcel.parcelType}</TableCell>
               <TableCell>{parcel.requestedDeliveryDate}</TableCell>
-              <TableCell>{parcel.approxDeliveryDate || "N/A"}</TableCell>
+              <TableCell>{parcel.approximateDeliveryDate || "N/A"}</TableCell>
               <TableCell>{new Date(parcel.bookingDate).toLocaleDateString()}</TableCell>
               <TableCell>{parcel.deliveryMenId || "N/A"}</TableCell>
               <TableCell>{parcel.status}</TableCell>
-              <TableCell >
-                {parcel.status === "pending" ? (
+              <TableCell>
+                {parcel.status === "Pending" ? (
                   <>
                     <button
-                      className="px-3  text-center py-1 bg-red-500 text-white rounded-md hover:bg-red-600 mr-2"
-                      onClick={() => handleCancel(parcel._id)}
+                      className="px-3 text-center py-1 bg-red-500 text-white rounded-md hover:bg-red-600 mr-2"
+                      onClick={() => openCancelModal(parcel._id)}
                     >
                       Cancel
                     </button>
@@ -134,7 +140,7 @@ const MyParcels = () => {
                   </>
                 ) : (
                   <>
-                    <button className="px-3 mr-2 text-center py-1 bg-gray-500 text-white rounded-md " disabled>
+                    <button className="px-3 mr-2 text-center py-1 bg-gray-500 text-white rounded-md" disabled>
                       Cancel
                     </button>
                     <button className="px-3 mr-2 text-center py-1 bg-gray-500 text-white rounded-md" disabled>
@@ -144,7 +150,7 @@ const MyParcels = () => {
                 )}
                 {parcel.status === "Delivered" && (
                   <button
-                    className="px-3  text-center py-1 bg-green-500 text-white rounded-md hover:bg-green-600 mr-2"
+                    className="px-3 text-center py-1 bg-green-500 text-white rounded-md hover:bg-green-600 mr-2"
                     onClick={() => {
                       setSelectedParcel(parcel);
                       setModalOpen(true);
@@ -154,11 +160,11 @@ const MyParcels = () => {
                   </button>
                 )}
                 <button
-                  className={`px-3 mr-2 text-center py-1 rounded-md ${parcel.status === "Delivered" || parcel.status === "Cancelled"
+                  className={`px-3 mr-2 text-center py-1 rounded-md ${parcel.status === "Delivered" || parcel.status === "Canceled"
                     ? "bg-gray-500 text-white cursor-not-allowed"
                     : "bg-yellow-500 text-white hover:bg-yellow-600"
                     }`}
-                  disabled={parcel.status === "Delivered" || parcel.status === "Cancelled"}
+                  disabled={parcel.status === "Delivered" || parcel.status === "Canceled"}
                 >
                   Pay
                 </button>
@@ -235,6 +241,29 @@ const MyParcels = () => {
                 Close
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Modal */}
+      {cancelModalOpen && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-md w-1/3">
+            <h2 className="text-xl font-bold mb-4">Are you sure you want to cancel this parcel?</h2>
+            <div className="flex justify-end">
+              <button
+                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 mr-2"
+                onClick={() => setCancelModalOpen(false)} // Close modal without doing anything
+              >
+                No
+              </button>
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                onClick={handleConfirmCancel} // Proceed with cancellation
+              >
+                Yes, Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -3,9 +3,9 @@ import axios from "axios";
 import {
   Table,
   TableBody,
-  TableCaption,
+  
   TableCell,
-  TableHead,
+  
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
@@ -18,7 +18,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { toast } from "react-toastify"; 
+import { toast } from "react-toastify";
 
 const Modal = ({ message, onConfirm, onCancel }) => (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50 z-10">
@@ -141,19 +141,24 @@ const AllUsers = () => {
                   value={user.role}
                   onChange={(e) => handleRoleChange(user._id, e.target.value)}
                   className="border px-2 py-1 rounded"
+                  disabled={user.role === "admin"} 
                 >
                   <option value="customer">Customer</option>
                   <option value="admin">Admin</option>
                   <option value="deliveryman">Deliveryman</option>
                 </select>
+
               </TableCell>
               <TableCell>
                 <button
                   onClick={() => openModal(user._id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded"
+                  className={`px-3 py-1 rounded ${user.role === "admin" ? "bg-gray-400 text-gray-200" : "bg-red-500 text-white"
+                    }`}
+                  disabled={user.role === "admin"}
                 >
                   Delete
                 </button>
+
               </TableCell>
             </TableRow>
           ))}
