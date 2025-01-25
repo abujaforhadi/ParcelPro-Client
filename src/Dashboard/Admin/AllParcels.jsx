@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router";
+import Loading from "../../Components/Loading";
+import ParcelModal from "../../Components/ParcelModal";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   Table,
   TableBody,
@@ -8,65 +12,100 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 
 const AllParcels = () => {
   const [parcels, setParcels] = useState([]);
+  const [deliveryMen, setDeliveryMen] = useState([]);
+  const [selectedParcel, setSelectedParcel] = useState(null);
+  const [deliveryDate, setDeliveryDate] = useState("");
   const [searchStartDate, setSearchStartDate] = useState("");
   const [searchEndDate, setSearchEndDate] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const itemsPerPage = 10;
+  const navigate = useNavigate();
 
-  // Function to fetch parcels with optional date filters
-  const fetchParcels = async (page = 1, startDate = "", endDate = "") => {
+  useEffect(() => {
+    const fetchParcelsAndDeliveryMen = async () => {
+      try {
+        setIsLoading(true);
+
+        const [parcelsResponse, usersResponse] = await Promise.all([
+          axios.get("https://parcelpro-server.vercel.app/allparcels"),
+          axios.get("https://parcelpro-server.vercel.app/users"),
+        ]);
+
+        setParcels(parcelsResponse.data);
+        setDeliveryMen(
+          usersResponse.data.filter((user) => user.role === "deliveryman")
+        );
+      } catch (err) {
+        setError("Failed to fetch data.");
+        toast.error("Failed to load data.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchParcelsAndDeliveryMen();
+  }, []);
+
+  const handleAssign = async (parcelId, deliveryManId) => {
+    if (!deliveryManId || !deliveryDate) {
+      toast.warning("Please select a delivery man and date.");
+      return;
+    }
+
     try {
       setIsLoading(true);
-      const response = await axios.get(
-        "http://localhost:3000/all-parcels",
-        {
-          params: { page, limit: itemsPerPage, startDate, endDate },
-        }
+      await axios.put(`https://parcelpro-server.vercel.app/updateparcel/${parcelId}`, {
+        status: "On The Way",
+        deliveryMenId: deliveryManId,
+        approximateDeliveryDate: deliveryDate,
+      });
+
+      setParcels((prev) =>
+        prev.map((parcel) =>
+          parcel._id === parcelId
+            ? { ...parcel, status: "On The Way", deliveryMenId, approximateDeliveryDate: deliveryDate }
+            : parcel
+        )
       );
 
-      setParcels(response.data.parcels);
-      setTotalPages(response.data.totalPages);
+      setSelectedParcel(null);
+      toast.success("Parcel assigned successfully!");
+
+      navigate("/");
     } catch (err) {
-      toast.error("Failed to load data.");
+      console.error("Error assigning delivery man:", err);
+      toast.error("Failed to assign parcel.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchParcels(currentPage); 
-  }, [currentPage]);
-
-  // Handle date search
-  const handleSearch = () => {
-    if (!searchStartDate || !searchEndDate) {
-      toast.warning("Please select both start and end dates.");
-      return;
+  const handleSearch = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get("https://parcelpro-server.vercel.app/allparcels", {
+        params: { startDate: searchStartDate, endDate: searchEndDate },
+      });
+      setParcels(response.data);
+    } catch (err) {
+      setError("Search failed.");
+      toast.error("Failed to search parcels.");
+    } finally {
+      setIsLoading(false);
     }
-
-    fetchParcels(1, searchStartDate, searchEndDate); 
-    setCurrentPage(1); 
   };
+
+  if (isLoading) return <Loading />;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="container mx-auto p-6">
       <ToastContainer position="top-right" autoClose={3000} />
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between">
         <h1 className="text-2xl font-semibold mb-4">All Parcels</h1>
 
         <div className="flex gap-4 mb-6">
@@ -101,6 +140,7 @@ const AllParcels = () => {
               <TableCell>Requested Delivery Date</TableCell>
               <TableCell>Cost</TableCell>
               <TableCell>Status</TableCell>
+              <TableCell>Manage</TableCell>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -112,42 +152,35 @@ const AllParcels = () => {
                 <TableCell>{parcel.requestedDeliveryDate}</TableCell>
                 <TableCell>{parcel.price} Tk</TableCell>
                 <TableCell>{parcel.status}</TableCell>
+                <TableCell>
+                  <button
+                    onClick={() => setSelectedParcel(parcel)}
+                    
+                    disabled={parcel.status === "Delivered" || parcel.status === "Canceled" }
+                    className={`bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 ${parcel.status === "Delivered" || parcel.status === "Canceled"
+                        ? "cursor-not-allowed opacity-50"
+                        : ""
+                      }`}
+                  >
+                    Manage
+                  </button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
 
-      {/* Pagination */}
-      <div className="mt-4 flex justify-center">
-        <Pagination>
-          <PaginationPrevious
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </PaginationPrevious>
-          <PaginationContent>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <PaginationItem key={i}>
-                <PaginationLink
-                  onClick={() => setCurrentPage(i + 1)}
-                  active={currentPage === i + 1}
-                >
-                  {i + 1}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-            {totalPages > 5 && <PaginationEllipsis />}
-          </PaginationContent>
-          <PaginationNext
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </PaginationNext>
-        </Pagination>
-      </div>
+      {selectedParcel && (
+        <ParcelModal
+          parcel={selectedParcel}
+          deliveryMen={deliveryMen}
+          deliveryDate={deliveryDate}
+          setDeliveryDate={setDeliveryDate}
+          onClose={() => setSelectedParcel(null)}
+          onAssign={handleAssign}
+        />
+      )}
     </div>
   );
 };
