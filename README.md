@@ -76,8 +76,8 @@ ParcelPro is a Parcel Management System built using the MERN stack, designed to 
 
 ### Installation
 1. Clone the repositories:
-   - **Client**: https://github.com/Programming-Hero-Web-Course4/b10a12-client-side-abujaforhadi
-   - **Server**: https://github.com/Programming-Hero-Web-Course4/b10a12-server-side-abujaforhadi
+   - **Client**: https://github.com/abujaforhadi/ParcelPro-Client.git
+   - **Server**: https://github.com/abujaforhadi/ParcelPro-server.git
 
 2. Install dependencies:
    ```bash
@@ -111,8 +111,8 @@ ParcelPro is a Parcel Management System built using the MERN stack, designed to 
 - **Delivery Person Email**: `d@gmail.com`
 - **Delivery Person Password**: `d@gmail.com`
 - **Live Site URL**: https://parcelpro.abujafor.me/
-- **Client Repository**: https://github.com/Programming-Hero-Web-Course4/b10a12-client-side-abujaforhadi
-- **Server Repository**: https://github.com/Programming-Hero-Web-Course4/b10a12-server-side-abujaforhadi
+- **Client Repository**: https://github.com/abujaforhadi/ParcelPro-Client
+- **Server Repository**: https://github.com/abujaforhadi/ParcelPro-server
 
 ---
 
