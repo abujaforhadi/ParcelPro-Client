@@ -2,6 +2,7 @@
 
 ## Objective
 ParcelPro is a Parcel Management System built using the MERN stack, designed to provide a seamless platform where users can book parcels, admins can assign delivery personnel, and delivery personnel can manage parcel deliveries. 
+![3](https://github.com/user-attachments/assets/b2d4cf09-6cc4-4a18-8e32-47441500f238)
 
 ---
 
