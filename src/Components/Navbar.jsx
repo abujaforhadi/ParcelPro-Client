@@ -26,9 +26,9 @@ const Navbar = () => {
     // Handle Dashboard click based on user role
     const handleDashboardClick = () => {
         if (isAdmin) {
-            navigate("/dashboard/statistics"); // Navigate to admin dashboard
+            navigate("/dashboard/statistics");
         } else if (isDeliveryman) {
-            navigate("/dashboard/mydeliverylist"); // Navigate to deliveryman dashboard
+            navigate("/dashboard/mydeliverylist"); 
         } else {
             navigate("/dashboard/myparcels"); // Navigate to general user dashboard
         }

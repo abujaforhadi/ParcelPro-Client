@@ -5,7 +5,7 @@ import TopDeliveryMen from '@/Components/TopDeliveryMen';
 import ClientsSection from '@/Components/ClientsSection';
 const Home = () => {
     return (
-        <div>
+        <div className='md:py-10 mx-auto'>
 
             <Hero/>
             {/* <NewsletterForm/> */}

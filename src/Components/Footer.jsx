@@ -8,7 +8,7 @@ import {SlArrowUp} from "react-icons/sl";
 const Footer = () => {
 
     return (
-        <footer className="boxShadow rounded-xl w-full p-3 lg:p-4 relative">
+        <footer className="boxShadow rounded-xl   relative">
 
             <div
                 className="w-full flex items-center justify-center pt-[30px] flex-col gap-[20px] pb-[130px]">
