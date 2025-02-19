@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import { IoIosArrowUp, IoMdNotificationsOutline } from "react-icons/io";
 import { TbLogout2 } from "react-icons/tb";
-import {  AiOutlineFire } from "react-icons/ai";
 import { FiUser } from "react-icons/fi";
 import { AuthContext } from "../Auth/AuthProvider";
 import { Link, NavLink, useNavigate } from "react-router";
@@ -23,29 +22,25 @@ const Navbar = () => {
         }
     };
 
-    // Handle Dashboard click based on user role
     const handleDashboardClick = () => {
         if (isAdmin) {
             navigate("/dashboard/statistics");
         } else if (isDeliveryman) {
             navigate("/dashboard/mydeliverylist"); 
         } else {
-            navigate("/dashboard/myparcels"); // Navigate to general user dashboard
+            navigate("/dashboard/myparcels"); 
         }
     };
 
     return (
-        <nav className="flex items-center justify-between w-full relative">
+<nav className="px-5 md:px-10 py-2 flex items-center justify-between w-full fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
             <Link to="/">
                 <img src="/logo.png" alt="logo" className="w-[60px]" />
             </Link>
-            {/* <ul className="items-center gap-[20px] text-[1rem] text-[#424242] lg:flex hidden">
-                <li className="flex items-center gap-[5px] cursor-pointer">
-                    <AiOutlineFire className="text-[1.1rem] text-gray-600" />
-                    Features
-                </li>
-            </ul> */}
-
+            <div className="flex items-center gap-[20px] text-[1rem] text-[#424242]">
+                <NavLink to="/about" className="hover:text-gray-600">About</NavLink>
+                <NavLink to="/contact" className="hover:text-gray-600">Contact</NavLink>
+            </div>
             <div className="flex items-center gap-[15px]">
                 <button><IoMdNotificationsOutline className="w-7 h-7"/>
                 </button>
@@ -97,10 +92,8 @@ const Navbar = () => {
                     >
                         <p className="flex items-center"><CiLogin />
                         Login</p>
-                       
                     </Link>
                 )}
-
             </div>
         </nav>
     );

@@ -21,6 +21,7 @@ import UpdateParcel from "../Dashboard/Customer/UpdateParcel";
 import DeliveryManRouter from "./DeliveryManRouter";
 import Payment from "@/Dashboard/Payment";
 import PaymentSuccess from "@/Dashboard/PaymentSuccess";
+import Contact from "@/Components/Contact";
 
 const router = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
             {
                 path: "/",
                 element: <Home />
+            },
+            {
+                path: "/contact",
+                element: <Contact />
             },
             {
                 path: "/login",
