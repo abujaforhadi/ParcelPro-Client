@@ -1,77 +1,117 @@
-import React, { useState } from "react";
-
-// react icons
-import { FaPlus } from "react-icons/fa6";
+import React, { useEffect, useState } from "react";
+import { AiOutlineDown, AiOutlineUp } from "react-icons/ai";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const Faq = () => {
-    const accordingData = [
-        {
-            title: "How do I book a parcel for delivery?",
-            description:
-                "Users can book a parcel by signing in, entering delivery details, and making a payment.",
-        },
-        {
-            title: "How can I track my parcel?",
-            description:
-                "You can track your parcel by entering your tracking ID in the tracking section on our website.",
-        },
-        {
-            title: "What are the delivery charges?",
-            description:
-                "Delivery charges vary based on weight, distance, and delivery speed. Check our pricing page for details.",
-        },
-        {
-            title: "What should I do if my parcel is delayed?",
-            description:
-                "If your parcel is delayed, please contact our support team with your tracking ID for assistance.",
-        },
-        {
-            title: "Can I cancel a parcel after booking?",
-            description:
-                "Yes, but cancellation policies apply based on the parcel's delivery status. Check our terms for more information.",
-        },
-    ];
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+  }, []);
 
-    const [isPlusAccording, setIsPlusAccording] = useState(null);
+  const faqs = [
+    {
+        question: "How do I book a parcel for delivery?",
+        answer:
+            "Users can book a parcel by signing in, entering delivery details, and making a payment.",
+    },
+    {
+        question: "How can I track my parcel?",
+        answer:
+            "You can track your parcel by entering your tracking ID in the tracking section on our website.",
+    },
+    {
+        question: "What are the delivery charges?",
+        answer:
+            "Delivery charges vary based on weight, distance, and delivery speed. Check our pricing page for details.",
+    },
+    {
+        question: "What should I do if my parcel is delayed?",
+        answer:
+            "If your parcel is delayed, please contact our support team with your tracking ID for assistance.",
+    },
+    {
+        question: "Can I cancel a parcel after booking?",
+        answer:
+            "Yes, but cancellation policies apply based on the parcel's delivery status. Check our terms for more information.",
+    },
+];
 
-    const handleBorderClick = (index) =>
-        setIsPlusAccording((prevIndex) => (prevIndex === index ? null : index));
+  const [activeIndex, setActiveIndex] = useState(null);
 
-    return (
-        <div className="flex gap-3 flex-col w-full">
-            {accordingData?.map((according, index) => (
-                <article key={index} className="border border-[#e5eaf2] rounded p-3">
-                    <div
-                        className="flex gap-2 cursor-pointer items-center justify-between w-full"
-                        onClick={() => handleBorderClick(index)}
+  const toggleFAQ = (index) => {
+    setActiveIndex(activeIndex === index ? null : index);
+  };
+
+  return (
+    <section className="py-24   ">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col justify-center items-center gap-x-16 gap-y-5 xl:gap-28 lg:flex-row lg:justify-between max-lg:max-w-2xl mx-auto max-w-full">
+          <div className="w-full lg:w-1/2">
+            <img
+              src="https://pagedone.io/asset/uploads/1696230182.png"
+              alt="FAQ illustration"
+              className="w-full rounded-xl object-cover"
+            />
+          </div>
+          <div className="w-full lg:w-1/2">
+            <div className="lg:max-w-xl">
+              <div className="mb-6 lg:mb-16 text-center lg:text-left">
+                <h6 className="text-lg font-medium text-blue-600 mb-2">
+                  FAQs
+                </h6>
+                <h2 className="text-4xl font-bold  leading-[3.25rem] dark:text-white">
+                  Looking for answers?
+                </h2>
+              </div>
+              <div className="accordion-group">
+                {faqs.map((faq, index) => (
+                  <div
+                    key={index}
+                    className={`accordion py-8 border-b border-gray-200 ${
+                      activeIndex === index ? "active" : ""
+                    }`}
+                  >
+                    <button
+                      onClick={() => toggleFAQ(index)}
+                      className={`accordion-toggle group flex justify-between items-center w-full text-xl font-normal text-gray-600 hover:text-blue-600 ${
+                        activeIndex === index
+                          ? "text-blue-600 font-medium"
+                          : ""
+                      }`}
+                      aria-controls={`faq-content-${index}`}
                     >
-                        <h2 className="text-[#3B9DF8] font-[600] text-[1.2rem]">
-                            {according.title}
-                        </h2>
-                        <p>
-                            <FaPlus
-                                className={`text-[1.3rem] text-text transition-all duration-300 ${
-                                    isPlusAccording === index &&
-                                    "rotate-[45deg] !text-[#3B9DF8]"
-                                }`}
-                            />
-                        </p>
-                    </div>
+                      <h5>{faq.question}</h5>
+                      {activeIndex === index ? (
+                        <AiOutlineUp
+                          className="transition-transform text-gray-900"
+                          size={22}
+                        />
+                      ) : (
+                        <AiOutlineDown
+                          className="transition-transform text-gray-900"
+                          size={22}
+                        />
+                      )}
+                    </button>
                     <div
-                        className={`grid transition-all duration-300 overflow-hidden ease-in-out ${
-                            isPlusAccording === index
-                                ? "grid-rows-[1fr] opacity-100 mt-4"
-                                : "grid-rows-[0fr] opacity-0"
-                        }`}
+                      id={`faq-content-${index}`}
+                      className={`accordion-content overflow-hidden transition-max-height duration-300 ${
+                        activeIndex === index ? "max-h-[200px]" : "max-h-0"
+                      }`}
                     >
-                        <p className="text-[#424242] text-[0.9rem] overflow-hidden">
-                            {according.description}
-                        </p>
+                      <p className="text-base font-normal text-gray-600 mt-4">
+                        {faq.answer}
+                      </p>
                     </div>
-                </article>
-            ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-    );
+      </div>
+    </section>
+  );
 };
 
 export default Faq;
